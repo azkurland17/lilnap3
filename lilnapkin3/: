@@ -1,0 +1,101 @@
+const express = require('express')
+const es6Renderer = require('express-es6-template-engine')
+const bodyParser = require('body-parser')
+const app = express()
+
+
+app.engine('html', es6Renderer);
+app.set('views', 'views');
+app.set('view engine', 'html');
+app.use(bodyParser.urlencoded({ extended: true }))
+
+const xml = require('xml')
+const date = new Date();
+const timestamp = date.toLocaleString('en-GB', { timeZone: 'UTC' });
+
+app.get('/', function(req, res) {
+  res.render('index', {locals: {title: 'Welcome!'}});
+});
+
+app.get('/helloworld', function(req, res){
+  const num = Math.floor(Math.random() * 3);
+  const colors = ["blue", "yellow", "white"]
+
+  
+  const my_color = colors[num];
+  res.send(`<html style="background-color:${my_color};">
+    <h1>Hello Web World from Language JavaScript
+    on ${timestamp} enjoy my ${my_color} page </h1> </html>`);
+});
+const packetMsg = `Hello Data it\'s ${timestamp} `;
+const json = {"msg": packetMsg};
+const xmlpacket = xml([ { msg: packetMsg }], { declaration: true });
+const error = '<h1>Error: Specify response parameter</h1>';
+app.get('/hellodata', function(req, res){
+  var info = {};
+  const check = req.query.response;
+  if(check == "JSON"){
+      info = json;
+  }
+  else if(check == "XML"){
+      res.type('text/xml');
+      info = xmlpacket;
+  }
+  else{
+      info = error;
+  } 
+
+  res.send(info);
+
+});
+var mode = process.env;
+app.get('/envvariables', function(req, res){
+  res.send(req.headers);//req.headers);
+});
+
+
+app.get('/formcollection', function(req, res){
+  res.render('form', {locals: {title: 'ES6 Renderer'}}); 
+});
+
+app.post('/echo', function(req, res){
+  res.render('echo', {locals: {t: req.body.username}});
+});
+
+
+app.get('/sessionpage1.html', function(req, res){
+  res.render('session1',{locals: {}}); 
+});
+
+app.get('/sessionpage2.html', function(req, res){
+  res.render('session2',{locals: {}}); 
+});
+
+app.get('/users', function(req,res){
+   res.render('users',{locals: {}});
+});
+
+let obj = {
+        "jojo" : {
+          "fname": "john",
+          "uname": "jojo",
+          "admin": false
+        },
+        "cdawg" : {
+          "fname": "cacao",
+          "uname": "cdawg",
+          "admin": true
+        }
+     };
+
+app.get('/db', function(req,res){
+res.send(obj);
+});
+
+app.post('/db', function(req, res){
+console.log(req.body);
+obj = JSON.parse(req.body.string);
+
+});
+
+app.listen(8070, () => console.log('Example app listening on port 8070!'))

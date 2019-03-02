@@ -1,0 +1,85 @@
+body {
+  background-color: #dee6ed;
+}
+
+h1 {
+  font: 40px "Consolas";
+  color: #565256;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 2px 2px #ffffff;
+  border-style: ridge;
+  border-width: 2px 0px 2px 0px;
+}
+
+
+#caption{
+  color: grey;
+  text-align: center;
+}
+
+p {
+  color: black;
+  text-align: center;
+}
+
+.button{
+  display: inline-block;
+  padding: 15px 25px;
+  font: 15px "Helvetica";
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #024772;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #4e6b7c}
+
+.button:active {
+  background-color: #4e6b7c;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+
+#lilnapkin{
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+#reddead{
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#candle{
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.image{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 15%;
+  width: 100%;
+  height: 100%;
+  max-width: 1366px;
+}
