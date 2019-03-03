@@ -13,6 +13,7 @@
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
     "express-es6-template-engine": "^2.1.7",
+    "mysql": "^2.16.0",
     "set-cookie-parser": "^2.3.5",
     "xml": "^1.0.1"
   }

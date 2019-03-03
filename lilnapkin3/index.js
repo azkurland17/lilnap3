@@ -30,6 +30,19 @@ const timestamp = date.toLocaleString('en-GB', {
 });
 
 
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    port     : '3306',
+    database : 'users',
+    user     : 'root',
+    password : 'rootroot',
+});
+
+connection.connect(function(err) {
+    console.log('Connected as id ' + connection.threadId);
+});
+
 //creates a new client id (random number) that lasts for 15 min
 app.get('/', function(req, res) {
   res.render('index', {
@@ -41,16 +54,23 @@ app.get('/', function(req, res) {
   var cookie = req.cookies.cookieName;
   if (cookie === undefined) {
     // no: set a new cookie
-    var randomNumber = Math.random().toString();
-    randomNumber = randomNumber.substring(2, randomNumber.length);
-    res.cookie('cookieName', randomNumber, {
+    var cookieID = Math.random().toString();
+    cookieID = cookieID.substring(2, cookieID.length);
+    res.cookie('cookieName', cookieID, {
       maxAge: 900000,
       httpOnly: true
     }); //only lasts for 15 min?
     console.log('cookie created successfully');
+
+    connection.query('insert into users(id) values('+ cookieID +');');
   } else {
     // yes, cookie was already present
     console.log('cookie exists', cookie);
+    console.log('select * from users where id='+ cookie +';');
+    connection.query('select * from users where id='+ cookie +';', function(err, rows, fields) {
+        if(err) console.log(err);
+        console.log('The solution is: ', rows);
+    });
   }
 
 });
