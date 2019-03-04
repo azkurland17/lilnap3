@@ -30,17 +30,16 @@ const timestamp = date.toLocaleString('en-GB', {
 });
 
 
-var mysql      = require('mysql');
+var mysql = require('mysql');
 var connection = mysql.createConnection({
-    host     : 'localhost',
-    port     : '3306',
-    database : 'users',
-    user     : 'root',
-    password : 'rootroot',
+  host: 'localhost',
+  database: 'users',
+  user: 'root',
+  password: 'rootroot',
 });
 
 connection.connect(function(err) {
-    console.log('Connected as id ' + connection.threadId);
+  console.log('Connected as id ' + connection.threadId);
 });
 
 //creates a new client id (random number) that lasts for 15 min
@@ -52,6 +51,15 @@ app.get('/', function(req, res) {
   });
   // check if client sent cookie
   var cookie = req.cookies.cookieName;
+
+  var browser = useragent.parse(req.headers['user-agent']);
+  browser = browser.toAgent(); // 'Chrome 15.0.874
+
+  var osVar = useragent.parse(req.headers['user-agent']);
+  osVar = osVar.os.toString(); // 'Mac OSX 10.8.1'
+
+  console.log(browser, osVar);
+
   if (cookie === undefined) {
     // no: set a new cookie
     var cookieID = Math.random().toString();
@@ -61,15 +69,17 @@ app.get('/', function(req, res) {
       httpOnly: true
     }); //only lasts for 15 min?
     console.log('cookie created successfully');
+    console.log(osVar);
 
-    connection.query('insert into users(id) values('+ cookieID +');');
+    connection.query(`insert into users(id, os, browser) values('${cookie}','${osVar}', '${browser}');`);
   } else {
     // yes, cookie was already present
     console.log('cookie exists', cookie);
-    console.log('select * from users where id='+ cookie +';');
-    connection.query('select * from users where id='+ cookie +';', function(err, rows, fields) {
-        if(err) console.log(err);
-        console.log('The solution is: ', rows);
+    connection.query(`select * from users where id=${cookie};`, function(err, rows, fields) {
+      if (err) console.log(err);
+      if (!rows.length) {
+        connection.query(`insert into users(id, os, browser) values('${cookie}','${osVar}', '${browser}');`);
+      }
     });
   }
 
@@ -77,75 +87,36 @@ app.get('/', function(req, res) {
 
 //event or error
 
-
-
 app.post('/api/log/:logType', function(req, res) {
-  var logtype = req.params.logType; //can be body, event, error
-  var userID = req.cookies.cookieName; //clients ID
+  let user;
+  console.log(`select * from users where id=${req.cookies.cookieName};`);
+  if (req.cookies) {
+    connection.query(`select * from users where id=${req.cookies.cookieName};`, function(err, rows, fields) {
+      console.log("wtffsf");
+      if (rows) {
+        user = rows[0];
 
-  var osVar = useragent.parse(req.headers['user-agent']);
-  osVar = osVar.os.toString(); // 'Mac OSX 10.8.1'
+        console.log(user);
 
-  var browser = useragent.parse(req.headers['user-agent']);
-  browser = browser.toAgent(); // 'Chrome 15.0.874
 
-  var button = req.body.buttonType;
-
-  var user = 1; //TODO read from the database to see if user exists
-  var pattern = "pointless-learn"; //read the pattern in the database
-  //example pattern: pointless-donate-learn-donate
-
-  //if pattern is null -- insert first pattern button
-  if(pattern == null){
-    //insert the pattern word into the table for that user, will always be "pointless"
-    pattern = button;
-  }
-  else{
-    //else add to and check pattern
-    //build up the string of buttons (for ordering)
-    pattern = pattern.concat("-");
-    pattern = pattern.concat(button);
-
-    //firstB = first button that was clicked
-    //if donate occurs after learn more, add to db
-    var first = false;
-    var ret = false;
-    var b = pattern.split("/"),
-      i;
-    for (i = 0; i < b.length; i++) {
-      if (b[i] === "learn") {
-        first = true;
-      }
-      if (first) {
-        if (b[i] === "donate") {
-          ret = true;
+        if (user.pattern) {
+          user.pattern = user.pattern + "-" + req.body.buttonType;
+        } else {
+          user.pattern = req.body.buttonType;
         }
+
+        if (user.logs) {
+          user.logs = user.logs + "-" + req.body.logType;
+        } else {
+          user.logs = req.body.logType;
+        }
+
+        console.log(user);
+
+        connection.query(`UPDATE users SET pattern = '${user.pattern}', logs = '${user.logs}' WHERE id = ${user.id};`);
       }
-    }
-    ///ret = true if donate occurs after learn (insert in table)
-    //b[1] is the first user click (because b[0] is when page is loaded) (insert in table)
-    //console.log(pattern);
+    });
   }
-
-
-
-  //there are all the variables you would want for the table^^^
-  //console.log(req.body.buttonType); //ex) pointless(just reloaded no button clicked), donate, erroneousFunction...
-  //console.log(logtype);
-  // console.log(userID);
-  // console.log(osVar);
-  // console.log(browser);
-
-
-  //
-  // connection.query('insert into infoTable (columnName1, columnName2) values (value1, value2)', function(error, results, fields) {
-  //   if (error)
-  //     throw error;
-  //
-  //   results.forEach(result => {
-  //     console.log(result);
-  //   });
-  // });
 });
 
 

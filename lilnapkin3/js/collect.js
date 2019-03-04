@@ -4,7 +4,10 @@ function post(data, logType, buttonType) {
   $.ajax({
     type: "POST",
     url: "http://localhost:3000/api/log/" + logType,
-    data: JSON.stringify({ 'buttonType': buttonType }),
+    data: JSON.stringify({
+      'buttonType': buttonType,
+      'logType': logType
+    }),
     success: function(returnData) {
       console.log("button !!!");
       console.log(buttonType);

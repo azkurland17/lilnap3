@@ -6,6 +6,10 @@ const app = express()
 var cookieSecret = "lilnapkin";
 app.use(cookieParser(cookieSecret))
 
+app.use('/js', express.static('js'));
+app.use('/images', express.static('images'));
+app.use('/favicon', express.static('favicon'));
+
 
 app.engine('html', es6Renderer);
 app.set('views', 'views');
@@ -38,22 +42,17 @@ const timestamp = date.toLocaleString('en-GB', {
   timeZone: 'UTC'
 });
 
-// var mysql      = require('mysql');
-// var connection = mysql.createConnection({
-//     host     : 'localhost',
-//     database : 'dbname',
-//     user     : 'username',
-//     password : 'password',
-// });
-//
-// connection.connect(function(err) {
-//     if (err) {
-//         console.error('Error connecting: ' + err.stack);
-//         return;
-//     }
-//
-//     console.log('Connected as id ' + connection.threadId);
-// });
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+  host: 'localhost',
+  database: 'users',
+  user: 'root',
+  password: 'rootroot',
+});
+
+connection.connect(function(err) {
+  console.log('Connected as id ' + connection.threadId);
+});
 
 
 app.get('/', function(req, res) {
@@ -61,6 +60,13 @@ app.get('/', function(req, res) {
     locals: {
       title: 'Log page yo'
     }
+  });
+});
+
+app.get('/data', function(req, res) {
+  connection.query(`select * from users;`, function(err, rows, fields) {
+    console.log(rows)
+    res.send(JSON.stringify(rows))
   });
 });
 
