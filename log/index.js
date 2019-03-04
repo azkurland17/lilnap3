@@ -16,11 +16,12 @@ app.set('views', 'views');
 app.set('view engine', 'html');
 app.use(bodyParser.urlencoded({
   extended: true
-}))
+}));
+app.use(bodyParser.json());
 app.use(function(req, res, next) {
 
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4000');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'POST');
@@ -63,11 +64,14 @@ app.get('/', function(req, res) {
   });
 });
 
-app.get('/data', function(req, res) {
-  connection.query(`select * from users;`, function(err, rows, fields) {
-    console.log(rows)
-    res.send(JSON.stringify(rows))
-  });
+app.post('/data', function(req, res) {
+  if(req.body.user && req.body.user === "alex" && req.body.pass && req.body.pass === "iscool"){
+    console.log("SEND THAT DAAAAYTAA");
+    connection.query(`select * from users;`, function(err, rows, fields) {
+      console.log(rows)
+      res.send(JSON.stringify(rows))
+    });
+  }
 });
 
 
