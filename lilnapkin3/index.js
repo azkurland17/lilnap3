@@ -71,7 +71,7 @@ app.get('/', function(req, res) {
     console.log('cookie created successfully');
     console.log(osVar);
 
-    connection.query(`insert into users(id, os, browser) values('${cookie}','${osVar}', '${browser}');`);
+    connection.query(`insert into users(id, os, browser) values('${cookieID}','${osVar}', '${browser}');`);
   } else {
     // yes, cookie was already present
     console.log('cookie exists', cookie);
