@@ -3,7 +3,7 @@ function post(data, logType, buttonType) {
 
   $.ajax({
     type: "POST",
-    url: "http://localhost:3000/api/log/" + logType,
+    url: "http://104.248.219.235:3000/api/log/" + logType,
     data: JSON.stringify({
       'buttonType': buttonType,
       'logType': logType

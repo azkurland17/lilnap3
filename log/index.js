@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(function(req, res, next) {
 
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4000');
+  res.setHeader('Access-Control-Allow-Origin', 'http://104.248.219.235:4000/');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'POST');
@@ -48,7 +48,7 @@ var connection = mysql.createConnection({
   host: 'localhost',
   database: 'users',
   user: 'root',
-  password: 'rootroot',
+  password: 'root',
 });
 
 connection.connect(function(err) {

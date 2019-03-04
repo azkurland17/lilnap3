@@ -1,7 +1,7 @@
 function post(){
   $.ajax({
     type: "POST",
-    url: "http://localhost:4000/data",
+    url: "http://104.248.219.235:4000/data",
     data: JSON.stringify({
       'user': document.getElementById("user").value,
       'pass': document.getElementById("pass").value

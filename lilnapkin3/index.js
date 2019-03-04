@@ -35,7 +35,7 @@ var connection = mysql.createConnection({
   host: 'localhost',
   database: 'users',
   user: 'root',
-  password: 'rootroot',
+  password: 'root',
 });
 
 connection.connect(function(err) {
