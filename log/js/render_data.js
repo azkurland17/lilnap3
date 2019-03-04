@@ -7,6 +7,7 @@ function post(){
       'pass': document.getElementById("pass").value
     }),
     success: function(returnData) {
+      document.getElementById("auth").innerHTML = '';
       returnData = JSON.parse(returnData);
       console.log(typeof returnData);
       let html = `<tr>`
