@@ -69,7 +69,6 @@ app.get('/', function(req, res) {
       httpOnly: true
     }); //only lasts for 15 min?
     console.log('cookie created successfully');
-    console.log(osVar);
 
     connection.query(`insert into users(id, os, browser) values('${cookieID}','${osVar}', '${browser}');`);
   } else {
@@ -82,17 +81,14 @@ app.get('/', function(req, res) {
       }
     });
   }
-
 });
 
 //event or error
 
 app.post('/api/log/:logType', function(req, res) {
   let user;
-  console.log(`select * from users where id=${req.cookies.cookieName};`);
   if (req.cookies) {
     connection.query(`select * from users where id=${req.cookies.cookieName};`, function(err, rows, fields) {
-      console.log("wtffsf");
       if (rows) {
         user = rows[0];
 
@@ -113,9 +109,13 @@ app.post('/api/log/:logType', function(req, res) {
 
         console.log(user);
 
-        connection.query(`UPDATE users SET pattern = '${user.pattern}', logs = '${user.logs}' WHERE id = ${user.id};`);
+        connection.query(`UPDATE users SET pattern = '${user.pattern}', logs = '${user.logs}' WHERE id = ${user.id};`, function(err, rows, fields){
+          res.sendStatus(200)
+        });
       }
     });
+  } else {
+    res.sendStatus(500);
   }
 });
 
