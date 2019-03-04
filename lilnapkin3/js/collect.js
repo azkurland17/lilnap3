@@ -11,6 +11,10 @@ function post(data, logType, buttonType) {
     success: function(returnData) {
       console.log("button !!!");
       console.log(buttonType);
+      console.log(JSON.stringify({
+        'buttonType': buttonType,
+        'logType': logType
+      }));
     },
     headers: {
       "Content-type": "application/json"
