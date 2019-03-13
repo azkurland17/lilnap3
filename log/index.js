@@ -75,7 +75,6 @@ app.post('/auth', function(req, res) {
       });
       console.log(`${req.body.email} successfully logged in!`)
       console.log(auth.logged_in_users);
-      res.sendStatus(200);
       res.render('index', {
         locals: {
           title: 'Log page yo'

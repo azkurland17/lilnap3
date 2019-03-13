@@ -16,7 +16,7 @@ function isLoggedIn(cookie) {
   return logged_in_users.includes(cookie);
 }
 
-function login(email, password) {
+function login(email, password, cookie) {
   return new Promise((resolve, reject) => {
     users.userPass(email, password).then(matches => {
       if (matches) {
