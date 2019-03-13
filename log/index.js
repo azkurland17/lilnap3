@@ -2,6 +2,8 @@ const express = require('express')
 const es6Renderer = require('express-es6-template-engine')
 const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
+let auth = require('./authentication');
+let users = require('./users');
 const app = express()
 var cookieSecret = "lilnapkin";
 app.use(cookieParser(cookieSecret))
@@ -9,6 +11,10 @@ app.use(cookieParser(cookieSecret))
 app.use('/js', express.static('js'));
 app.use('/images', express.static('images'));
 app.use('/favicon', express.static('favicon'));
+app.use('/vendor', express.static('vendor'));
+app.use('/css', express.static('css'));
+app.use('/fonts', express.static('fonts'));
+// app.use('/vendor/*', express.static('vendor/'));
 
 
 app.engine('html', es6Renderer);
@@ -48,7 +54,7 @@ var connection = mysql.createConnection({
   host: 'localhost',
   database: 'users',
   user: 'root',
-  password: 'root',
+  password: 'rootroot',
 });
 
 connection.connect(function(err) {
@@ -64,8 +70,12 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/login', function(req, res) {
+  res.render('login');
+});
+
 app.post('/data', function(req, res) {
-  if(req.body.user && req.body.user === "alex" && req.body.pass && req.body.pass === "iscool"){
+  if (req.body.user && req.body.user === "alex" && req.body.pass && req.body.pass === "iscool") {
     console.log("SEND THAT DAAAAYTAA");
     connection.query(`select * from users;`, function(err, rows, fields) {
       console.log(rows)
@@ -74,11 +84,49 @@ app.post('/data', function(req, res) {
   }
 });
 
-
-
 // app.get('/cookie', function(req, res) {
 //   var cookies = setCookie.parse(res, {
 //   decodeValues: true  // default: true
 // });
 
-app.listen(4000, () => console.log('Example app listening on port 4000!'))
+
+
+//tests
+users.userExists('vcannall@ucsd.edu').then(function(value) {
+  console.log('test', value)
+})
+
+let userObj = {
+  email: 'azkur17@ucsd.edu',
+  password: 'test',
+  first_name: 'test',
+  last_name: 'test',
+  admin: 1
+};
+
+users.makeNewUser(userObj).then(value => {
+  console.log("created new user", value);
+  users.userPass(userObj.email, userObj.password).then(value => {
+    console.log("user matches pass", value);
+    // users.deleteUser('azkur17@ucsd.edu').then(value => {
+    //   console.log("deleted user", value);
+    // })
+  })
+})
+
+auth.login(userObj.email, userObj.password).then(msg => {
+  let cookie = msg.cookie;
+  console.log(msg.cookie, msg.error);
+  console.log(auth.logged_in_users);
+  if (cookie) {
+    auth.checkAdminStatus(cookie).then(adminStatus => {
+      console.log("admin status", adminStatus)
+    })
+    console.log(auth.logout('32523'));
+    console.log(auth.logged_in_users);
+    console.log(auth.logout(cookie));
+    console.log(auth.logged_in_users);
+  }
+})
+
+app.listen(4000, () => console.log('Example app listening on port 4000!'));
