@@ -82,7 +82,7 @@ function deleteUser(email) {
 function userPass(email, password) {
   return new Promise((resolve, reject) => {
     connection.query(`select * from auth where email='${email}';`, function(err, rows, fields) {
-      if (rows) {
+      if (rows.length) {
         // check if password in DB for given user matches entered password
         let db_password = rows[0].password;
         let entered_password = password.hashCode();

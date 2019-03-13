@@ -63,25 +63,40 @@ connection.connect(function(err) {
 
 
 app.get('/', function(req, res) {
-  res.render('index', {
-    locals: {
-      title: 'Log page yo'
-    }
-  });
-});
-
-app.get('/login', function(req, res) {
   res.render('login');
 });
 
+app.post('/auth', function(req, res) {
+  auth.login(req.body.email, req.body.pass).then(cookie => {
+    if(cookie.cookie){
+      res.cookie('cookie', cookie.cookie, {
+        maxAge: 900000,
+        httpOnly: true
+      });
+      console.log(`${req.body.email} successfully logged in!`)
+      console.log(auth.logged_in_users);
+      res.sendStatus(200);
+      res.render('index', {
+        locals: {
+          title: 'Log page yo'
+        }
+      });
+    } else {
+      res.render('login');
+    }
+  })
+})
+
+app.get('/login', function(req, res) {
+
+});
+
 app.post('/data', function(req, res) {
-  if (req.body.user && req.body.user === "alex" && req.body.pass && req.body.pass === "iscool") {
     console.log("SEND THAT DAAAAYTAA");
     connection.query(`select * from users;`, function(err, rows, fields) {
       console.log(rows)
       res.send(JSON.stringify(rows))
     });
-  }
 });
 
 // app.get('/cookie', function(req, res) {
