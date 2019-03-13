@@ -27,8 +27,9 @@ String.prototype.hashCode = function() {
 // will check if user with specified email exists in database
 function userExists(email) {
   console.log(`Checking if user: '${email}' exists`)
+  console.log(`select * from users where email='${email}';`)
   return new Promise((resolve, reject) => {
-    connection.query(`select * from auth where email='${email}';`, function(err, rows, fields) {
+    connection.query(`select * from users where email='${email}';`, function(err, rows, fields) {
       let exists = (rows.length) ? true : false;
       resolve(exists);
     });
@@ -50,7 +51,7 @@ function makeNewUser(userObj) {
   return new Promise((resolve, reject) => {
     userExists(userObj.email).then(exists => {
       if (!exists) {
-        connection.query(`insert into auth(email, password, first_name, last_name, admin) values('${userObj.email}','${userObj.password.hashCode()}','${userObj.first_name}','${userObj.last_name}',${userObj.admin})`, function(err, rows, fields) {
+        connection.query(`insert into users(email, password, first_name, last_name, admin) values('${userObj.email}','${userObj.password.hashCode()}','${userObj.first_name}','${userObj.last_name}',${userObj.admin})`, function(err, rows, fields) {
           if (err) {
             resolve(false);
           } else {
@@ -68,7 +69,7 @@ function makeNewUser(userObj) {
 function deleteUser(email) {
   console.log(`deleting user: ${email}`);
   return new Promise((resolve, reject) => {
-    connection.query(`delete from auth where email='${email}'`, function(err, rows, fields) {
+    connection.query(`delete from users where email='${email}'`, function(err, rows, fields) {
       if (err) {
         resolve(false);
       } else {
@@ -81,7 +82,7 @@ function deleteUser(email) {
 // checks if password matches given email
 function userPass(email, password) {
   return new Promise((resolve, reject) => {
-    connection.query(`select * from auth where email='${email}';`, function(err, rows, fields) {
+    connection.query(`select * from users where email='${email}';`, function(err, rows, fields) {
       if (rows.length) {
         // check if password in DB for given user matches entered password
         let db_password = rows[0].password;
@@ -97,7 +98,7 @@ function userPass(email, password) {
 
 function isAdmin(email){
   return new Promise((resolve, reject) => {
-    connection.query(`select admin from auth where email='${email}';`, function(err, rows, fields) {
+    connection.query(`select admin from users where email='${email}';`, function(err, rows, fields) {
       if (rows) {
         // check if password in DB for given user matches entered password
         let exists = (rows[0].admin) ? true : false;
