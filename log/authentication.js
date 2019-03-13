@@ -1,19 +1,19 @@
 let users = require('./users')
 
 // array of cookies for logged in users
-let logged_in_users = [];
+let logged_in_users = {};
 
 // returns cookie for logging in user
 function getCookie() {
   let cookie = Math.floor(Math.random() * 100000000);
-  while (logged_in_users.includes(cookie)) {
+  while (Object.keys(logged_in_users).includes(cookie)) {
     cookie = Math.floor(Math.random() * 100000000);
   }
   return cookie;
 }
 
 function isLoggedIn(cookie) {
-  return logged_in_users.includes(cookie);
+  return Object.keys(logged_in_users).includes(cookie);
 }
 
 function login(email, password, cookie) {
@@ -23,10 +23,7 @@ function login(email, password, cookie) {
         //add cookie to logged_in_users
         //return cookie
         let cookie = getCookie();
-        logged_in_users.push({
-          email: email,
-          cookie: cookie
-        });
+        logged_in_users[cookie] = email;
         resolve({
           cookie: cookie
         });
@@ -40,10 +37,11 @@ function login(email, password, cookie) {
 }
 
 function logout(cookie) {
-  let arr = logged_in_users;
+  console.log(`logging out user with cookie ${cookie}`);
+  let arr = Object.keys(logged_in_users);
   for (var i = 0; i < arr.length; i++) {
-    if (arr[i].cookie === cookie) {
-      arr.splice(i, 1);
+    if (arr[i] == cookie) {
+      delete logged_in_users[arr[i]];
       return true;
     }
   }
@@ -51,11 +49,11 @@ function logout(cookie) {
 }
 
 function checkAdminStatus(cookie) {
-  let arr = logged_in_users;
+  let arr = Object.keys(logged_in_users);
   return new Promise((resolve, reject) => {
     for (var i = 0; i < arr.length; i++) {
-      if (arr[i].cookie === cookie) {
-        users.isAdmin(arr[i].email).then(adminStatus => {
+      if (arr[i] == cookie) {
+        users.isAdmin(logged_in_users[arr[i]]).then(adminStatus => {
           resolve(adminStatus);
         });
       }

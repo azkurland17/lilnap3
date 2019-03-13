@@ -61,41 +61,84 @@ connection.connect(function(err) {
   console.log('Connected as id ' + connection.threadId);
 });
 
+var requiresLogin = function() {
+  return [
+    function(req, res, next) {
+      console.log("authentication")
+      if (auth.isLoggedIn(req.cookies.cookie)) {
+        next();
+      } else
+        res.render('login');
+    }
+  ]
+};
+
+var requiresAdmin = function() {
+  return [
+    function(req, res, next) {
+      console.log("authentication")
+      if (auth.checkAdminStatus(req.cookies.cookie)) {
+        next();
+      } else
+        res.render('login');
+    }
+  ]
+};
+
+app.all('/portal', requiresLogin());
+
+app.all('/portal', requiresAdmin());
 
 app.get('/', function(req, res) {
   res.render('login');
 });
 
-app.post('/auth', function(req, res) {
+app.get('/portal', function(req, res) {
+  res.render('portal');
+})
+
+app.post('/login', function(req, res) {
+  let response = {
+    path: ""
+  };
   auth.login(req.body.email, req.body.pass).then(cookie => {
-    if(cookie.cookie){
+    if (cookie.cookie) {
       res.cookie('cookie', cookie.cookie, {
         maxAge: 900000,
         httpOnly: true
       });
       console.log(`${req.body.email} successfully logged in!`)
       console.log(auth.logged_in_users);
-      res.render('index', {
-        locals: {
-          title: 'Log page yo'
-        }
-      });
+      response.path = '/portal';
+      // res.render('portal');
+      // res.render('index', {
+      //   locals: {
+      //     title: 'Log page yo'
+      //   }
+      // });
     } else {
-      res.render('login');
+      // res.render('login');
+      response.path = '/';
     }
+    res.send(JSON.stringify(response));
   })
 })
 
-app.get('/login', function(req, res) {
-
+app.post('/logout', function(req, res) {
+  let response = {
+    path: "/"
+  };
+  auth.logout(req.cookies.cookie);
+  res.clearCookie('cookie');
+  res.send(JSON.stringify(response));
 });
 
 app.post('/data', function(req, res) {
-    console.log("SEND THAT DAAAAYTAA");
-    connection.query(`select * from users;`, function(err, rows, fields) {
-      console.log(rows)
-      res.send(JSON.stringify(rows))
-    });
+  console.log("SEND THAT DAAAAYTAA");
+  connection.query(`select * from users;`, function(err, rows, fields) {
+    console.log(rows)
+    res.send(JSON.stringify(rows))
+  });
 });
 
 // app.get('/cookie', function(req, res) {

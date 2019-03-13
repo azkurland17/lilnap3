@@ -13,10 +13,10 @@
             else {
                 $(this).removeClass('has-val');
             }
-        })    
+        })
     })
-  
-  
+
+
     /*==================================================================
     [ Validate ]*/
     var input = $('.validate-input .input100');
@@ -65,6 +65,24 @@
 
         $(thisAlert).removeClass('alert-validate');
     }
-    
+
 
 })(jQuery);
+
+document.getElementById("submit").addEventListener("click", function(event){
+  event.preventDefault();
+  console.log("click");
+  $.ajax({
+    type: "post",
+    url: "http://localhost:4000/login",
+    credentials: 'same-origin',
+    data: {
+      'email': document.getElementById("email").value,
+      'pass': document.getElementById("pass").value
+    },
+    success: function(msg){
+      let route = (JSON.parse(msg)).path;
+      window.location = route;
+    }
+  });
+});
