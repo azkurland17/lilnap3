@@ -89,15 +89,40 @@ app.get('/learn', function(req, res) {
   });
 });
 
+app.get('/error', function(req, res) {
+  setNav(req);
+  cookieCreate(req, res).then(test => {
+    res.render('jolene');
+  });
+});
+
 app.post('/event', function(req, res) {
   createEvent(req, res);
 });
 
+app.post('/error', function(req, res) {
+  createError(req, res);
+});
+
+app.post('/performance', function(req, res) {
+  createPerformance(req);
+});
 // app.post('/', function(req, res) {
 //   cookieCreate(req.cookies, res).then();
 //   console.log('cookie created successfully');
 //
 // });
+
+function createPerformance(req) {
+  let render_time = req.body.render_time;
+  let time_stamp = (new Date()).toString();
+  let page_source = (url.parse(req.headers.referer, true)).pathname;
+  let cookie = req.cookies.visitor;
+  if(cookie){
+    connection.query(`Insert into performance(render_time, time_stamp, page_source, cookie) values ('${render_time}', '${time_stamp}', '${page_source}', '${cookie}');`);
+  }
+}
+
 
 //creates a cookie and sets it in the users browser
 //inserts the cookie into the db if newly created
@@ -158,6 +183,23 @@ function createEvent(req, res) {
       cookie = promise.cookie;
     }
     connection.query(`Insert into events(button_id, time_stamp, cookie) values ('${button_id}', '${time_stamp}', '${cookie}');`);
+    res.sendStatus(200);
+  });
+}
+
+function createError(req, res){
+  cookieCreate(req, res).then(promise => {
+    let error_type = req.body.error_type;
+    let lineno = req.body.lineno;
+    let page_source = req.body.page_source;
+    let cookie = req.cookies.visitor;
+    let time_stamp = (new Date()).toString();
+
+    if(promise.cookie){
+      cookie = promise.cookie;
+    }
+    connection.query(`Insert into errors(error_type, page_source, lineno, cookie, time_stamp) values ('${error_type}', '${page_source}', '${lineno}', '${cookie}', '${time_stamp}');`);
+    res.send({cookie: cookie});
     res.sendStatus(200);
   });
 }

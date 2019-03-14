@@ -1,4 +1,8 @@
+var renderStart = new Date().getTime();
+
 window.onload = function() {
+  submitRender();
+
   let buttons = document.getElementsByTagName("button");
 
   for (let index in buttons) {
@@ -43,17 +47,67 @@ function submitEvent(buttonID) {
   });
 }
 
-function submitData(element) {
-  let logType = element.id.split("-")[0];
-  let buttonType = element.id.split("-")[1];
-  console.log("HEYYY BUTTON IS THIS");
-  console.log(buttonType);
-  post({
-    "alex": "is pretty"
-  }, logType, buttonType);
+function submitError(buttonID) {
+  console.log(buttonID.split('-')[1]);
+  buttonID = buttonID.split('-')[1];
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:3000/event",
+    data: {
+      'buttonID': buttonID,
+    },
+    success: function() {
+
+    },
+    xhrFields: {
+      withCredentials: true
+    },
+  });
+}
+
+function submitRender() {
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:3000/performance",
+    data: {
+      'render_time': new Date().getTime() - renderStart,
+    },
+    xhrFields: {
+      withCredentials: true
+    },
+  });
 }
 
 window.onerror = function(message, source, lineno, colno, error) {
-  console.log("hey")
-  console.log("error", error)
+  let path = source.split('/');
+  source = path[(path.length) - 1];
+
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:3000/error",
+    data: {
+      'page_source': source,
+      'error_type': (message.split(":"))[0],
+      'lineno': lineno
+    },
+    success: function(data, textStatus, response) {
+      console.log(data);
+      // alert("done!"+ response.getResponseHeader('Set-Cookie'));
+    },
+    xhrFields: {
+      withCredentials: true
+    },
+  });
 }
+
+setTimeout(function(){ $.ajax({
+  type: "GET",
+  url: "http://localhost:3000/donate",
+  success: function(data, textStatus, response){
+    // console.log(data);
+    alert("done!"+ response.getResponseHeader('Set-Cookie'));
+  },
+  xhrFields: {
+    withCredentials: true
+  },
+}); }, 3000);
