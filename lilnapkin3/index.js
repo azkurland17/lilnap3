@@ -61,11 +61,13 @@ connection.connect(function(err) {
 });
 
 app.get('/bot', function(req, res) {
+  console.log(`GET /bot ${(new Date()).toLocaleTimeString()}`);
   res.render('bot');
 })
 
 //creates a new client id (random number) that lasts for 15 min
 app.get('/', function(req, res) {
+  console.log(`GET / ${(new Date()).toLocaleTimeString()}`);
   setNav(req);
   cookieCreate(req, res).then(test => {
     res.render('index');
@@ -73,6 +75,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/home', function(req, res) {
+  console.log(`GET /home ${(new Date()).toLocaleTimeString()}`);
   setNav(req);
   cookieCreate(req, res).then(cookie => {
     res.render('index');
@@ -80,6 +83,7 @@ app.get('/home', function(req, res) {
 });
 
 app.get('/donate', function(req, res) {
+  console.log(`GET /donate ${(new Date()).toLocaleTimeString()}`);
   setNav(req);
   cookieCreate(req, res).then(cookie => {
     res.render('donate');
@@ -87,6 +91,7 @@ app.get('/donate', function(req, res) {
 });
 
 app.get('/learn', function(req, res) {
+  console.log(`GET /learn ${(new Date()).toLocaleTimeString()}`);
   setNav(req);
   cookieCreate(req, res).then(test => {
     res.render('learn');
@@ -94,6 +99,7 @@ app.get('/learn', function(req, res) {
 });
 
 app.get('/error', function(req, res) {
+  console.log(`GET /error ${(new Date()).toLocaleTimeString()}`);
   setNav(req);
   cookieCreate(req, res).then(test => {
     res.render('jolene');
@@ -101,15 +107,18 @@ app.get('/error', function(req, res) {
 });
 
 app.post('/event', function(req, res) {
+  console.log(`POST /event ${(new Date()).toLocaleTimeString()}`);
   createEvent(req, res);
 });
 
 app.post('/error', function(req, res) {
+  console.log(`POST /error ${(new Date()).toLocaleTimeString()}`);
   createError(req, res);
 });
 
 app.post('/performance', function(req, res) {
-  createPerformance(req);
+  console.log(`POST /performance ${(new Date()).toLocaleTimeString()}`);
+  createPerformance(req, res);
 });
 // app.post('/', function(req, res) {
 //   cookieCreate(req.cookies, res).then();
@@ -121,11 +130,11 @@ app.post('/performance', function(req, res) {
 //creates a cookie and sets it in the users browser
 //inserts the cookie into the db if newly created
 function cookieCreate(req, res) {
+  // console.log(`–– CALLED cookieCreate`);
   return new Promise((resolve, reject) => {
     // new user
     if (req.cookies.visitor == undefined) {
       // make new cookie number
-      console.log("creating new user");
       let cookieID = Math.floor(Math.random() * 100000000);
       let create_date = (new Date).toISOString();
       connection.query(`Insert into visitors(cookie, create_date) values ('${cookieID}', '${create_date}');`, function() {
@@ -133,7 +142,6 @@ function cookieCreate(req, res) {
       });
       res.cookie('visitor', cookieID, {
         maxAge: 900000,
-        httpOnly: true
       }); //only lasts for 15 min?
       resolve({
         cookie: cookieID
@@ -146,6 +154,7 @@ function cookieCreate(req, res) {
 }
 
 function setEnv(req, cookie) {
+  // console.log(`–– CALLED setEnv`);
   var browser = useragent.parse(req.headers['user-agent']);
   browser = browser.toAgent(); // 'Chrome 15.0.874
 
@@ -156,6 +165,7 @@ function setEnv(req, cookie) {
 }
 
 function setNav(req) {
+  // console.log(`–– CALLED setNav`);
   let originURL = req.headers.referer;
   let pt_A = "/outside";
   if (originURL) {
@@ -166,6 +176,7 @@ function setNav(req) {
 }
 
 function createEvent(req, res) {
+  // console.log(`–– CALLED createEvent`);
   cookieCreate(req, res).then(promise => {
     let button_id = req.body.buttonID;
     let cookie = req.cookies.visitor;
@@ -180,25 +191,23 @@ function createEvent(req, res) {
 }
 
 function createError(req, res) {
+  // console.log(`–– CALLED createError`);
   cookieCreate(req, res).then(promise => {
     let error_type = req.body.error_type;
     let lineno = req.body.lineno;
     let page_source = req.body.page_source;
     let cookie = req.cookies.visitor;
     let time_stamp = (new Date).toISOString();
-
     if (promise.cookie) {
       cookie = promise.cookie;
     }
     connection.query(`Insert into errors(error_type, page_source, lineno, cookie, time_stamp) values ('${error_type}', '${page_source}', '${lineno}', '${cookie}', '${time_stamp}');`);
-    res.send({
-      cookie: cookie
-    });
     res.sendStatus(200);
   });
 }
 
-function createPerformance(req) {
+function createPerformance(req, res) {
+  // console.log(`–– CALLED createPerformance`);
   let render_time = req.body.render_time;
   let time_stamp = (new Date).toISOString();
   let page_source = (url.parse(req.headers.referer, true)).pathname;
@@ -206,6 +215,7 @@ function createPerformance(req) {
   if (cookie) {
     connection.query(`Insert into performance(render_time, time_stamp, page_source, cookie) values ('${render_time}', '${time_stamp}', '${page_source}', '${cookie}');`);
   }
+  res.sendStatus(200);
 }
 
 // app.post('/navigation' function(req, res) {
