@@ -23,8 +23,10 @@ function login(email, password, sent_cookie) {
       if (matches) {
         //add cookie to logged_in_users
         //return cookie
-        if(sent_cookie !== undefined){
-          delete logged_in_users[sent_cookie];
+        for (let cookie in logged_in_users) {
+          if(logged_in_users[cookie] == email){
+            delete logged_in_users[cookie];
+          }
         }
         let cookie = getCookie();
         logged_in_users[cookie] = email;
