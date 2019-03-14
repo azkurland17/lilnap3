@@ -65,7 +65,7 @@ app.all('/portal', auth.requiresLogin());
 app.all('/admin', auth.requiresAdmin());
 
 app.get('/', function(req, res) {
-  res.render('login');
+    res.render('login');
 });
 
 app.get('/portal', function(req, res) {
@@ -80,7 +80,7 @@ app.post('/login', function(req, res) {
   let response = {
     path: ""
   };
-  auth.login(req.body.email, req.body.pass).then(cookie => {
+  auth.login(req.body.email, req.body.pass, req.cookies.cookie).then(cookie => {
     if (cookie.cookie) {
       res.cookie('cookie', cookie.cookie, {
         maxAge: 900000,

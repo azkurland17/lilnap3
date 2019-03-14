@@ -16,12 +16,16 @@ function isLoggedIn(cookie) {
   return Object.keys(logged_in_users).includes(cookie);
 }
 
-function login(email, password, cookie) {
+function login(email, password, sent_cookie) {
+  console.log("cookie", sent_cookie)
   return new Promise((resolve, reject) => {
     users.userPass(email, password).then(matches => {
       if (matches) {
         //add cookie to logged_in_users
         //return cookie
+        if(sent_cookie !== undefined){
+          delete logged_in_users[sent_cookie];
+        }
         let cookie = getCookie();
         logged_in_users[cookie] = email;
         resolve({
