@@ -113,16 +113,6 @@ app.post('/performance', function(req, res) {
 //
 // });
 
-function createPerformance(req) {
-  let render_time = req.body.render_time;
-  let time_stamp = (new Date()).toString();
-  let page_source = (url.parse(req.headers.referer, true)).pathname;
-  let cookie = req.cookies.visitor;
-  if(cookie){
-    connection.query(`Insert into performance(render_time, time_stamp, page_source, cookie) values ('${render_time}', '${time_stamp}', '${page_source}', '${cookie}');`);
-  }
-}
-
 
 //creates a cookie and sets it in the users browser
 //inserts the cookie into the db if newly created
@@ -133,7 +123,7 @@ function cookieCreate(req, res) {
       // make new cookie number
       console.log("creating new user");
       let cookieID = Math.floor(Math.random() * 100000000);
-      let create_date = (new Date()).toString();
+      let create_date = (new Date).toISOString();
       connection.query(`Insert into visitors(cookie, create_date) values ('${cookieID}', '${create_date}');`, function() {
         setEnv(req, cookieID);
       });
@@ -177,7 +167,7 @@ function createEvent(req, res) {
   cookieCreate(req, res).then(promise => {
     let button_id = req.body.buttonID;
     let cookie = req.cookies.visitor;
-    let time_stamp = (new Date()).toString();
+    let time_stamp = (new Date).toISOString();
 
     if(promise.cookie){
       cookie = promise.cookie;
@@ -193,7 +183,7 @@ function createError(req, res){
     let lineno = req.body.lineno;
     let page_source = req.body.page_source;
     let cookie = req.cookies.visitor;
-    let time_stamp = (new Date()).toString();
+    let time_stamp = (new Date).toISOString();
 
     if(promise.cookie){
       cookie = promise.cookie;
@@ -202,6 +192,18 @@ function createError(req, res){
     res.send({cookie: cookie});
     res.sendStatus(200);
   });
+}
+
+function createPerformance(req) {
+  let render_time = req.body.render_time;
+  let time_stamp = (new Date).toISOString();
+  let page_source = (url.parse(req.headers.referer, true)).pathname;
+  let cookie = req.cookies.visitor;
+  console.log(time_stamp)
+  console.log(cookie)
+  if(cookie){
+    connection.query(`Insert into performance(render_time, time_stamp, page_source, cookie) values ('${render_time}', '${time_stamp}', '${page_source}', '${cookie}');`);
+  }
 }
 
 // app.post('/navigation' function(req, res) {
