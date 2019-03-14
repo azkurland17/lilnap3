@@ -60,6 +60,10 @@ connection.connect(function(err) {
   console.log('Connected as id ' + connection.threadId);
 });
 
+app.get('/bot', function(req, res) {
+  res.render('bot');
+})
+
 //creates a new client id (random number) that lasts for 15 min
 app.get('/', function(req, res) {
   setNav(req);
@@ -148,8 +152,6 @@ function setEnv(req, cookie) {
   var osVar = useragent.parse(req.headers['user-agent']);
   osVar = osVar.os.toString(); // 'Mac OSX 10.8.1'
 
-  console.log(browser, osVar);
-
   connection.query(`Insert into environment(os, browser, cookie) values ('${osVar}', '${browser}', '${cookie}');`);
 }
 
@@ -169,7 +171,7 @@ function createEvent(req, res) {
     let cookie = req.cookies.visitor;
     let time_stamp = (new Date).toISOString();
 
-    if(promise.cookie){
+    if (promise.cookie) {
       cookie = promise.cookie;
     }
     connection.query(`Insert into events(button_id, time_stamp, cookie) values ('${button_id}', '${time_stamp}', '${cookie}');`);
@@ -177,7 +179,7 @@ function createEvent(req, res) {
   });
 }
 
-function createError(req, res){
+function createError(req, res) {
   cookieCreate(req, res).then(promise => {
     let error_type = req.body.error_type;
     let lineno = req.body.lineno;
@@ -185,11 +187,13 @@ function createError(req, res){
     let cookie = req.cookies.visitor;
     let time_stamp = (new Date).toISOString();
 
-    if(promise.cookie){
+    if (promise.cookie) {
       cookie = promise.cookie;
     }
     connection.query(`Insert into errors(error_type, page_source, lineno, cookie, time_stamp) values ('${error_type}', '${page_source}', '${lineno}', '${cookie}', '${time_stamp}');`);
-    res.send({cookie: cookie});
+    res.send({
+      cookie: cookie
+    });
     res.sendStatus(200);
   });
 }
@@ -199,9 +203,7 @@ function createPerformance(req) {
   let time_stamp = (new Date).toISOString();
   let page_source = (url.parse(req.headers.referer, true)).pathname;
   let cookie = req.cookies.visitor;
-  console.log(time_stamp)
-  console.log(cookie)
-  if(cookie){
+  if (cookie) {
     connection.query(`Insert into performance(render_time, time_stamp, page_source, cookie) values ('${render_time}', '${time_stamp}', '${page_source}', '${cookie}');`);
   }
 }
