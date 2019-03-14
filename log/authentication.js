@@ -61,11 +61,37 @@ function checkAdminStatus(cookie) {
   });
 }
 
+function requiresLogin() {
+  return [
+    function(req, res, next) {
+      console.log("authentication")
+      if (isLoggedIn(req.cookies.cookie)) {
+        next();
+      } else
+        res.render('login');
+    }
+  ]
+}
+
+function requiresAdmin() {
+  return [
+    function(req, res, next) {
+      console.log("authentication")
+      if (checkAdminStatus(req.cookies.cookie)) {
+        next();
+      } else
+        res.render('login');
+    }
+  ]
+}
+
 module.exports = {
   logged_in_users: logged_in_users,
   getCookie: getCookie,
   logout: logout,
   login: login,
   checkAdminStatus: checkAdminStatus,
-  isLoggedIn: isLoggedIn
+  isLoggedIn: isLoggedIn,
+  requiresLogin: requiresLogin,
+  requiresAdmin: requiresAdmin
 }

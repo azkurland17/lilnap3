@@ -8,6 +8,7 @@
 <body>
   <h1>portal</h1>
   <button onclick="logout()">Logout</button>
+  <button onclick="admin()">Admin</button>
 
   <script>
     function logout() {
@@ -19,6 +20,10 @@
           window.location = (JSON.parse(msg)).path;
         }
       });
+    }
+
+    function admin() {
+      window.location = '/admin';
     }
   </script>
 </body>

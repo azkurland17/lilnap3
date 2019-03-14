@@ -61,33 +61,8 @@ connection.connect(function(err) {
   console.log('Connected as id ' + connection.threadId);
 });
 
-var requiresLogin = function() {
-  return [
-    function(req, res, next) {
-      console.log("authentication")
-      if (auth.isLoggedIn(req.cookies.cookie)) {
-        next();
-      } else
-        res.render('login');
-    }
-  ]
-};
-
-var requiresAdmin = function() {
-  return [
-    function(req, res, next) {
-      console.log("authentication")
-      if (auth.checkAdminStatus(req.cookies.cookie)) {
-        next();
-      } else
-        res.render('login');
-    }
-  ]
-};
-
-app.all('/portal', requiresLogin());
-
-app.all('/portal', requiresAdmin());
+app.all('/portal', auth.requiresLogin());
+app.all('/admin', auth.requiresAdmin());
 
 app.get('/', function(req, res) {
   res.render('login');
@@ -95,6 +70,10 @@ app.get('/', function(req, res) {
 
 app.get('/portal', function(req, res) {
   res.render('portal');
+})
+
+app.get('/admin', function(req, res) {
+  res.render('admin');
 })
 
 app.post('/login', function(req, res) {
