@@ -76,6 +76,10 @@ app.get('/admin', function(req, res) {
   res.render('admin');
 })
 
+app.get('/testchart', function(req, res) {
+  res.render('testchart');
+})
+
 app.post('/login', function(req, res) {
   let response = {
     path: ""

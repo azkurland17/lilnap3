@@ -54,15 +54,21 @@ var dataPie = {
         'Blue'
     ]
 };
-r = Math.floor(Math.random() * 200);
-g = Math.floor(Math.random() * 200);
-b = Math.floor(Math.random() * 200);
-color = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+
+// var backgroundColor= [
+//               "#FF6384",
+//               "#36A2EB",
+//               "#FFCE56"]
+
 
 // For a pie chart
 var p = document.getElementById("myPieChart");
 var myPieChart = new Chart(p,{
     type: 'pie',
     data: dataPie,
-    options: color
+    //options: color,
+    backgroundColor: [
+                  "#FF6384",
+                  "#36A2EB",
+                  "#FFCE56"]
 });
