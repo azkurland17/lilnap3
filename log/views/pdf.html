@@ -1,0 +1,11 @@
+<script>
+  var iframe = "<iframe width='100%' height='100%' src='" + "data:application/pdf;base64," + encodeURI(
+    ${iframesrc}
+  ) + "'></iframe>"
+  var x = window.open();
+  x.document.open();
+  x.document.write(iframe);
+  x.document.close();
+</script>
+
+<iframe src="data:application/pdf;base64,${iframesrc}" width="100%" height="100%"></iframe>

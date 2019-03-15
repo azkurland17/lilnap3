@@ -172,7 +172,7 @@ function getUser(user) {
   return new Promise((resolve, reject) => {
     console.log("in getuser");
     console.log(user);
-    connection.query(`select * from users where email='${user}'`, function(err, rows, fields) {
+    connection.query(`select * from users where email='${user}';`, function(err, rows, fields) {
       let data = rows[0];
       resolve({
         email: data.email,
