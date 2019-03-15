@@ -82,7 +82,7 @@ function deleteUser(email) {
 function readUsers() {
   console.log("returning list of users");
   return new Promise((resolve, reject) => {
-    connection.query(`select * from users;`, function(err, rows, fields) {
+    connection.query(`select * from users ORDER BY first_name ASC;`, function(err, rows, fields) {
       resolve(rows);
     });
   });
@@ -93,7 +93,6 @@ function renderUsers() {
   return new Promise((resolve, reject) => {
     readUsers().then(users => {
       users.map(user => {
-        console.log((JSON.stringify(user)).split("\"").join("\'"))
         html += `
       <tr>
         <td>
@@ -104,7 +103,7 @@ function renderUsers() {
         <td>${(user.admin)? 'True': 'False'}</td>
         <td>
           <a href="#editEmployeeModal" class="edit" data-toggle="modal" onclick="populateEdit(${(JSON.stringify(user)).split("\"").join("\'")})"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-          <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+          <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" onclick="initializeDelete(\'${user.email}\')"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
         </td>
       </tr>
       `
@@ -158,14 +157,14 @@ function updateUser(userObj){
     console.log(userObj);
     let query;
     if(userObj.password){
-      query = `UPDATE table_name SET column1 = value1, column2 = value2 WHERE condition;`;
+      query = `UPDATE users SET password = '${userObj.password.hashCode()}', first_name = '${userObj.first_name}', last_name='${userObj.last_name}', admin='${userObj.admin}' WHERE email='${userObj.email}';`;
       console.log('PASSWORD');
     } else {
-      query = ``;
+      query = `UPDATE users SET first_name = '${userObj.first_name}', last_name='${userObj.last_name}', admin='${userObj.admin}' WHERE email='${userObj.email}';`;
       console.log("NO PASSWORD!!!");
     }
-    resolve()
     connection.query(query);
+    resolve();
   });
 }
 

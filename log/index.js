@@ -63,7 +63,7 @@ connection.connect(function(err) {
 
 app.all('/portal', auth.requiresLogin());
 app.all('/admin', auth.requiresAdmin());
-app.all('/updateuser', auth.requiresAdmin());
+app.all('/users/*', auth.requiresAdmin());
 
 app.get('/', function(req, res) {
   res.render('login');
@@ -124,10 +124,18 @@ app.post('/data', function(req, res) {
   });
 });
 
-app.put('/updateuser', function(req, res){
+app.put('/users/updateuser', function(req, res) {
   users.updateUser(req.body.user_obj);
   res.sendStatus(200);
 })
+
+app.delete('/users/deleteuser/:user', function(req, res) {
+  users.deleteUser(req.params.user).then(result => {
+    res.sendStatus(200);
+  });
+})
+
+
 
 // app.get('/cookie', function(req, res) {
 //   var cookies = setCookie.parse(res, {
