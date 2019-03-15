@@ -317,20 +317,40 @@
   </div>
   <!-- Edit Modal HTML -->
   <script>
-  function createNewUser(){
-    console.log("hry");
-  }
+    window.onload = function() {
+      document.getElementById('create-submit').addEventListener('click', function(event) {
+        event.preventDefault();
+      })
+    }
 
-  function clearCreate(){
+    function createNewUser() {
+      let user_obj = {
+        'email': document.getElementById('create-email').value,
+        'password': document.getElementById('create-password').value,
+        'first_name': document.getElementById('create-first').value,
+        'last_name': document.getElementById('create-last').value,
+        'admin': (document.getElementById('create-isadmin').checked) ? 1 : 0,
+      }
+      $.ajax({
+        type: "post",
+        url: "http://localhost:4000/users/createuser",
+        credentials: 'same-origin',
+        data: {
+          user_obj: user_obj
+        },
+        success: function(msg) {
+          window.location = '/admin'
+        }
+      });
+    }
 
-  }
-  // {
-  //   email: 'azkur17@ucsd.edu',
-  //   password: '3556498',
-  //   first_name: 'test',
-  //   last_name: 'test',
-  //   admin: 1
-  // }
+    function clearCreate() {
+      document.getElementById('create-email').value = "";
+      document.getElementById('create-password').value = "";
+      document.getElementById('create-first').value = "";
+      document.getElementById('create-last').value = "";
+      document.getElementById('create-isadmin').checked = false;
+    }
   </script>
   <div id="addEmployeeModal" class="modal fade">
     <div class="modal-dialog">
@@ -366,7 +386,7 @@
           </div>
           <div class="modal-footer">
             <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onclick="clearCreate()">
-            <input type="submit" class="btn btn-success" value="Add" onclick="createNewUser()">
+            <input type="submit" class="btn btn-success" value="Add" onclick="createNewUser()" id="create-submit">
           </div>
         </form>
       </div>
