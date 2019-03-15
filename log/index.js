@@ -62,6 +62,7 @@ connection.connect(function(err) {
 });
 
 app.all('/portal', auth.requiresLogin());
+app.all('/profile', auth.requiresLogin());
 app.all('/admin', auth.requiresAdmin());
 app.all('/users/*', auth.requiresAdmin());
 
@@ -83,8 +84,19 @@ app.get('/admin', function(req, res) {
   });
 });
 
+app.get('/profile', function(req, res) {
+  res.render('profile');
+})
+
 app.get('/testchart', function(req, res) {
   res.render('testchart');
+})
+
+app.get('/loaduser', function(req, res) {
+  users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
+    res.send({userInfo: userInfo});
+    res.sendStatus(200);
+  })
 })
 
 app.post('/login', function(req, res) {

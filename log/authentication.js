@@ -16,12 +16,18 @@ function isLoggedIn(cookie) {
   return Object.keys(logged_in_users).includes(cookie);
 }
 
-function login(email, password, cookie) {
+function login(email, password, sent_cookie) {
+  console.log("cookie", sent_cookie)
   return new Promise((resolve, reject) => {
     users.userPass(email, password).then(matches => {
       if (matches) {
         //add cookie to logged_in_users
         //return cookie
+        for (let cookie in logged_in_users) {
+          if(logged_in_users[cookie] == email){
+            delete logged_in_users[cookie];
+          }
+        }
         let cookie = getCookie();
         logged_in_users[cookie] = email;
         resolve({
@@ -96,6 +102,10 @@ function requiresAdmin(req, res, next) {
   ]
 }
 
+function getUserFromCookie(cookie){
+  return logged_in_users[cookie];
+}
+
 module.exports = {
   logged_in_users: logged_in_users,
   getCookie: getCookie,
@@ -104,5 +114,6 @@ module.exports = {
   checkAdminStatus: checkAdminStatus,
   isLoggedIn: isLoggedIn,
   requiresLogin: requiresLogin,
-  requiresAdmin: requiresAdmin
+  requiresAdmin: requiresAdmin,
+  getUserFromCookie: getUserFromCookie
 }
