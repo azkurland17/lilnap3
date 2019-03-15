@@ -89,7 +89,7 @@ function readUsers() {
 }
 
 function renderUsers() {
-  let html;
+  let html = '';
   return new Promise((resolve, reject) => {
     readUsers().then(users => {
       users.map(user => {

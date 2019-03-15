@@ -86,7 +86,6 @@ app.get('/admin', function(req, res) {
 
 app.get('/profile', function(req, res) {
   users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
-    console.log(userInfo)
     res.render('profile', {
       locals: {
         userInfo: userInfo
