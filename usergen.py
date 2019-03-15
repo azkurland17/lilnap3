@@ -3,7 +3,7 @@ import json
 import random
 
 num_users = 100
-num_moves = 50
+num_moves = 0
 
 # bot stuff
 curr_page = "error"
@@ -131,23 +131,26 @@ def makeDecision():
 
 
 def main():
-    user_num = 0
-    while user_num < num_users:
-        global cookies
-        global headers
-        global curr_page
+	global num_moves;
+	user_num = 0
+	while user_num < num_users:
+		global cookies
+		global headers
+		global curr_page
 
-        cookies = ''
-        curr_page = 'outside'
+		num_moves = random.randint(5, 100)
 
-        generateHeaders()
-        print(json.dumps(headers))
-        move_num = 0
-        while move_num < num_moves:
-            makeDecision()
-            move_num += 1
+		cookies = ''
+		curr_page = 'outside'
 
-        user_num += 1
+		generateHeaders()
+		print(json.dumps(headers))
+		move_num = 0
+		while move_num < num_moves:
+			makeDecision()
+			move_num += 1
+
+		user_num += 1
 
 
 main()

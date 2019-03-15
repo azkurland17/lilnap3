@@ -79,6 +79,41 @@ function deleteUser(email) {
   });
 }
 
+function readUsers() {
+  console.log("returning list of users");
+  return new Promise((resolve, reject) => {
+    connection.query(`select * from users;`, function(err, rows, fields) {
+      resolve(rows);
+    });
+  });
+}
+
+function renderUsers() {
+  let html;
+  return new Promise((resolve, reject) => {
+    readUsers().then(users => {
+      users.map(user => {
+        console.log((JSON.stringify(user)).split("\"").join("\'"))
+        html += `
+      <tr>
+        <td>
+        </td>
+        <td>${user.first_name}</td>
+        <td>${user.last_name}</td>
+        <td>${user.email}</td>
+        <td>${(user.admin)? 'True': 'False'}</td>
+        <td>
+          <a href="#editEmployeeModal" class="edit" data-toggle="modal" onclick="populateEdit(${(JSON.stringify(user)).split("\"").join("\'")})"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+          <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+        </td>
+      </tr>
+      `
+      });
+      resolve(html);
+    })
+  });
+}
+
 // checks if password matches given email
 function userPass(email, password) {
   return new Promise((resolve, reject) => {
@@ -96,7 +131,7 @@ function userPass(email, password) {
   });
 }
 
-function isAdmin(email){
+function isAdmin(email) {
   return new Promise((resolve, reject) => {
     connection.query(`select admin from users where email='${email}';`, function(err, rows, fields) {
       if (rows) {
@@ -110,10 +145,36 @@ function isAdmin(email){
   });
 }
 
+// {
+//   email: 'azkur17@ucsd.edu',
+//   password: '3556498',
+//   first_name: 'test',
+//   last_name: 'test',
+//   admin: 1
+// }
+
+function updateUser(userObj){
+  return new Promise((resolve, reject) => {
+    console.log(userObj);
+    let query;
+    if(userObj.password){
+      query = `UPDATE table_name SET column1 = value1, column2 = value2 WHERE condition;`;
+      console.log('PASSWORD');
+    } else {
+      query = ``;
+      console.log("NO PASSWORD!!!");
+    }
+    resolve()
+    connection.query(query);
+  });
+}
+
 module.exports = {
   userExists: userExists,
   makeNewUser: makeNewUser,
   deleteUser: deleteUser,
   userPass: userPass,
-  isAdmin: isAdmin
+  isAdmin: isAdmin,
+  renderUsers: renderUsers,
+  updateUser: updateUser,
 }
