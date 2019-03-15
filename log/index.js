@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 let auth = require('./authentication');
 let users = require('./users');
+let db = require('./db-access');
 const app = express()
 var cookieSecret = "lilnapkin";
 app.use(cookieParser(cookieSecret))
@@ -151,6 +152,14 @@ app.post('/users/createuser', function(req, res) {
     res.sendStatus(200);
   })
 });
+
+app.get('/charts/:chartType/:dataType', function(req,res) {
+  console.log(req.params.chartType);
+  console.log(req.params.dataType);
+  db.getData(req.params.dataType).then(data => {
+    res.send(data)
+  });
+})
 
 
 
