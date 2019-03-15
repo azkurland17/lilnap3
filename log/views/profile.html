@@ -6,21 +6,15 @@
 </head>
 
 <body>
-  <h1>portal</h1>
-  <button onclick="window.location='/home'">Portal</button>
-
-  <script>
-    window.onload = function() {
-      $.ajax({
-        type: "get",
-        url: "http://localhost:4000/loaduser",
-        credentials: 'same-origin',
-        success: function(msg) {
-          console.log(msg);
-        }
-      });
-    }
-  </script>
+  <h1>User Data</h1>
+  <ul>
+    <li>${userInfo.email}</li>
+    <li>${userInfo.first_name}</li>
+    <li>${userInfo.last_name}</li>
+    <li>${userInfo.password}</li>
+    <li>${(userInfo.admin)? 'True': 'False'}</li>
+  </ul>
+  <button onclick="window.location='/portal'">Portal</button>
 </body>
 
 </html>

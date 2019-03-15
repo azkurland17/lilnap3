@@ -67,7 +67,7 @@ app.all('/admin', auth.requiresAdmin());
 app.all('/users/*', auth.requiresAdmin());
 
 app.get('/', function(req, res) {
-    res.render('login');
+  res.render('login');
 });
 
 app.get('/portal', function(req, res) {
@@ -85,18 +85,18 @@ app.get('/admin', function(req, res) {
 });
 
 app.get('/profile', function(req, res) {
-  res.render('profile');
+  users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
+    console.log(userInfo)
+    res.render('profile', {
+      locals: {
+        userInfo: userInfo
+      }
+    });
+  })
 })
 
 app.get('/testchart', function(req, res) {
   res.render('testchart');
-})
-
-app.get('/loaduser', function(req, res) {
-  users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
-    res.send({userInfo: userInfo});
-    res.sendStatus(200);
-  })
 })
 
 app.post('/login', function(req, res) {

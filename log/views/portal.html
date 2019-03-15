@@ -8,7 +8,8 @@
 <body>
   <h1>portal</h1>
   <button onclick="logout()">Logout</button>
-  <button onclick="admin()">Admin</button>
+  <button onclick="window.location='/admin'">Admin</button>
+  <button onclick="window.location='/profile'">Profile</button>
 
   <script>
     function logout() {
@@ -16,14 +17,10 @@
         type: "post",
         url: "http://localhost:4000/logout",
         credentials: 'same-origin',
-        success: function(msg){
+        success: function(msg) {
           window.location = (JSON.parse(msg)).path;
         }
       });
-    }
-
-    function admin() {
-      window.location = '/admin';
     }
   </script>
 </body>
