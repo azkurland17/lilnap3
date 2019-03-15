@@ -92,6 +92,10 @@ app.get('/testchart', function(req, res) {
   res.render('testchart');
 })
 
+app.get('/piechart', function(req, res) {
+  res.render('piechart');
+})
+
 app.get('/loaduser', function(req, res) {
   users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
     res.send({userInfo: userInfo});
