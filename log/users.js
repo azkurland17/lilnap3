@@ -132,14 +132,15 @@ function userPass(email, password) {
 
 function isAdmin(email) {
   return new Promise((resolve, reject) => {
+    let isAdmin = false;
     connection.query(`select admin from users where email='${email}';`, function(err, rows, fields) {
       if (rows) {
         // check if password in DB for given user matches entered password
-        let exists = (rows[0].admin) ? true : false;
-        resolve(exists);
+        isAdmin = (rows[0].admin) ? true : false;
       } else {
-        resolve(false)
+        isAdmin = false;
       }
+      resolve(isAdmin);
     });
   });
 }

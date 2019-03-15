@@ -127,13 +127,19 @@ app.post('/data', function(req, res) {
 app.put('/users/updateuser', function(req, res) {
   users.updateUser(req.body.user_obj);
   res.sendStatus(200);
-})
+});
 
 app.delete('/users/deleteuser/:user', function(req, res) {
   users.deleteUser(req.params.user).then(result => {
     res.sendStatus(200);
   });
-})
+});
+
+app.post('/users/createuser', function(req, res) {
+  users.makeNewUser(req.body.user_obj).then(result => {
+    res.sendStatus(200);
+  })
+});
 
 
 
