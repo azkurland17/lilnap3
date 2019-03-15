@@ -169,6 +169,14 @@ function updateUser(userObj){
   });
 }
 
+function getUser(user){
+  return new Promise((resolve, reject) => {
+    console.log("in getuser");
+    console.log(user);
+    connection.query(`select`);
+  });
+}
+
 module.exports = {
   userExists: userExists,
   makeNewUser: makeNewUser,
@@ -177,4 +185,5 @@ module.exports = {
   isAdmin: isAdmin,
   renderUsers: renderUsers,
   updateUser: updateUser,
+  getUser: getUser
 }
