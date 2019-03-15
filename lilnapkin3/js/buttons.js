@@ -99,15 +99,3 @@ window.onerror = function(message, source, lineno, colno, error) {
     },
   });
 }
-
-setTimeout(function(){ $.ajax({
-  type: "GET",
-  url: "http://localhost:3000/donate",
-  success: function(data, textStatus, response){
-    // console.log(data);
-    alert("done!"+ response.getResponseHeader('Set-Cookie'));
-  },
-  xhrFields: {
-    withCredentials: true
-  },
-}); }, 3000);
