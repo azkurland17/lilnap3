@@ -167,12 +167,20 @@ app.post('/users/createuser', function(req, res) {
   })
 });
 
+<<<<<<< Updated upstream
 app.get('/charts/:chartType/:dataType', function(req,res) {
   console.log(req.params.chartType);
   console.log(req.params.dataType);
   db.getData(req.params.dataType).then(data => {
     res.send(data)
   });
+=======
+//example chartType=pie dataType= os, browser
+app.get('/getcharts/:chartType/:dataType', function(req,res) {
+  console.log(req.params.chartType);
+  console.log(req.params.dataType);
+
+>>>>>>> Stashed changes
 })
 
 

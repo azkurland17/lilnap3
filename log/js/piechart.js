@@ -1,11 +1,11 @@
 $(function(){
 
   //get the pie chart canvas
-  var ctx1 = $("#pie-chartcanvas-1");
-  var ctx2 = $("#pie-chartcanvas-2");
+  var ctx1 = $("#pie-chartcanvas-OS");
+  var ctx2 = $("#pie-chartcanvas-Browser");
 
   //pie chart data
-  var data1 = {
+  var dataOS = {
     labels: ["match1", "match2", "match3", "match4", "match5"],
     datasets: [
       {
@@ -31,7 +31,7 @@ $(function(){
   };
 
   //pie chart data
-  var data2 = {
+  var dataBrowser = {
     labels: ["match1", "match2", "match3", "match4", "match5"],
     datasets: [
       {
@@ -57,12 +57,31 @@ $(function(){
   };
 
   //options
-  var options = {
+  var optionsOS = {
     responsive: true,
     title: {
       display: true,
       position: "top",
-      text: "Pie Chart",
+      text: "Users OS",
+      fontSize: 18,
+      fontColor: "#111"
+    },
+    legend: {
+      display: true,
+      position: "bottom",
+      labels: {
+        fontColor: "#333",
+        fontSize: 16
+      }
+    }
+  };
+  //options
+  var optionsBrowser = {
+    responsive: true,
+    title: {
+      display: true,
+      position: "top",
+      text: "Users Browsers",
       fontSize: 18,
       fontColor: "#111"
     },
@@ -79,14 +98,14 @@ $(function(){
   //create Chart class object
   var chart1 = new Chart(ctx1, {
     type: "pie",
-    data: data1,
-    options: options
+    data: dataOS,
+    options: optionsOS
   });
 
   //create Chart class object
   var chart2 = new Chart(ctx2, {
     type: "pie",
-    data: data2,
-    options: options
+    data: dataBrowser,
+    options: optionsBrowser
   });
 });
