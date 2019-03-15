@@ -23,6 +23,8 @@
 
   <button id="create" onclick="genLink()">Creat Link</button>
 
+  <button onclick="email()">email pdf</button>
+
   <script>
     var doc = new jsPDF();
     // var specialElementHandlers = {
@@ -67,6 +69,25 @@
         credentials: 'same-origin',
         data: {
           encoded: window.btoa(doc.output())
+        },
+        success: function(msg) {
+          console.log(msg);
+        }
+      });
+    }
+
+    function email(){
+      doc.fromHTML($('#content').html(), 15, 15, {
+        'width': 170,
+        // 'elementHandlers': specialElementHandlers
+      });
+      console.log(window.btoa(doc.output()))
+      $.ajax({
+        type: "post",
+        url: "http://localhost:4000/email",
+        credentials: 'same-origin',
+        data: {
+          pdf: window.btoa(doc.output())
         },
         success: function(msg) {
           console.log(msg);
