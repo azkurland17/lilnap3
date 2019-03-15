@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 let auth = require('./authentication');
 let users = require('./users');
+let db = require('./db-access');
 const app = express()
 var cookieSecret = "lilnapkin";
 app.use(cookieParser(cookieSecret))
@@ -85,13 +86,20 @@ app.get('/admin', function(req, res) {
 });
 
 app.get('/profile', function(req, res) {
-  res.render('profile');
+  users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
+    res.render('profile', {
+      locals: {
+        userInfo: userInfo
+      }
+    });
+  })
 })
 
 app.get('/testchart', function(req, res) {
   res.render('testchart');
 })
 
+<<<<<<< HEAD
 app.get('/piechart', function(req, res) {
   res.render('piechart');
 })
@@ -103,11 +111,13 @@ app.get('/loaduser', function(req, res) {
   })
 })
 
+=======
+>>>>>>> master
 app.post('/login', function(req, res) {
   let response = {
     path: ""
   };
-  auth.login(req.body.email, req.body.pass).then(cookie => {
+  auth.login(req.body.email, req.body.pass, req.cookies.cookie).then(cookie => {
     if (cookie.cookie) {
       res.cookie('cookie', cookie.cookie, {
         maxAge: 900000,
@@ -156,6 +166,14 @@ app.post('/users/createuser', function(req, res) {
     res.sendStatus(200);
   })
 });
+
+app.get('/charts/:chartType/:dataType', function(req,res) {
+  console.log(req.params.chartType);
+  console.log(req.params.dataType);
+  db.getData(req.params.dataType).then(data => {
+    res.send(data)
+  });
+})
 
 
 

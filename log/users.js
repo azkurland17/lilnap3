@@ -89,7 +89,7 @@ function readUsers() {
 }
 
 function renderUsers() {
-  let html;
+  let html = '';
   return new Promise((resolve, reject) => {
     readUsers().then(users => {
       users.map(user => {
@@ -145,19 +145,11 @@ function isAdmin(email) {
   });
 }
 
-// {
-//   email: 'azkur17@ucsd.edu',
-//   password: '3556498',
-//   first_name: 'test',
-//   last_name: 'test',
-//   admin: 1
-// }
-
-function updateUser(userObj){
+function updateUser(userObj) {
   return new Promise((resolve, reject) => {
     console.log(userObj);
     let query;
-    if(userObj.password){
+    if (userObj.password) {
       query = `UPDATE users SET password = '${userObj.password.hashCode()}', first_name = '${userObj.first_name}', last_name='${userObj.last_name}', admin='${userObj.admin}' WHERE email='${userObj.email}';`;
       console.log('PASSWORD');
     } else {
@@ -168,12 +160,28 @@ function updateUser(userObj){
     resolve();
   });
 }
+// {
+//   email: 'azkur17@ucsd.edu',
+//   password: '3556498',
+//   first_name: 'test',
+//   last_name: 'test',
+//   admin: 1
+// }
 
-function getUser(user){
+function getUser(user) {
   return new Promise((resolve, reject) => {
     console.log("in getuser");
     console.log(user);
-    connection.query(`select`);
+    connection.query(`select * from users where email='${user}'`, function(err, rows, fields) {
+      let data = rows[0];
+      resolve({
+        email: data.email,
+        password: data.password,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        admin: data.admin
+      });
+    });
   });
 }
 
