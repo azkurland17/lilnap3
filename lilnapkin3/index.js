@@ -2,6 +2,7 @@ const express = require('express')
 const es6Renderer = require('express-es6-template-engine')
 const bodyParser = require('body-parser')
 var useragent = require('useragent');
+var url = require('url');
 useragent(true);
 const app = express()
 var cookieParser = require('cookie-parser')
@@ -16,11 +17,27 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-
-
 app.use('/js', express.static('js'));
 app.use('/images', express.static('images'));
 app.use('/favicon', express.static('favicon'));
+app.use(function(req, res, next) {
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 
 const xml = require('xml')
@@ -33,91 +50,177 @@ const timestamp = date.toLocaleString('en-GB', {
 var mysql = require('mysql');
 var connection = mysql.createConnection({
   host: 'localhost',
-  database: 'users',
+  database: 'logs',
   user: 'root',
-  password: 'root',
+  password: 'rootroot',
 });
+
 
 connection.connect(function(err) {
   console.log('Connected as id ' + connection.threadId);
 });
 
+app.get('/bot', function(req, res) {
+  console.log(`GET /bot ${(new Date()).toLocaleTimeString()}`);
+  res.render('bot');
+})
+
 //creates a new client id (random number) that lasts for 15 min
 app.get('/', function(req, res) {
-  res.render('index', {
-    locals: {
-      title: 'Remembering Lil Napkin'
-    }
+  console.log(`GET / ${(new Date()).toLocaleTimeString()}`);
+  setNav(req);
+  cookieCreate(req, res).then(test => {
+    res.render('index');
   });
-  // check if client sent cookie
-  var cookie = req.cookies.cookieName;
+});
 
+app.get('/home', function(req, res) {
+  console.log(`GET /home ${(new Date()).toLocaleTimeString()}`);
+  setNav(req);
+  cookieCreate(req, res).then(cookie => {
+    res.render('index');
+  });
+});
+
+app.get('/donate', function(req, res) {
+  console.log(`GET /donate ${(new Date()).toLocaleTimeString()}`);
+  setNav(req);
+  cookieCreate(req, res).then(cookie => {
+    res.render('donate');
+  });
+});
+
+app.get('/learn', function(req, res) {
+  console.log(`GET /learn ${(new Date()).toLocaleTimeString()}`);
+  setNav(req);
+  cookieCreate(req, res).then(test => {
+    res.render('learn');
+  });
+});
+
+app.get('/error', function(req, res) {
+  console.log(`GET /error ${(new Date()).toLocaleTimeString()}`);
+  setNav(req);
+  cookieCreate(req, res).then(test => {
+    res.render('jolene');
+  });
+});
+
+app.post('/event', function(req, res) {
+  console.log(`POST /event ${(new Date()).toLocaleTimeString()}`);
+  createEvent(req, res);
+});
+
+app.post('/error', function(req, res) {
+  console.log(`POST /error ${(new Date()).toLocaleTimeString()}`);
+  createError(req, res);
+});
+
+app.post('/performance', function(req, res) {
+  console.log(`POST /performance ${(new Date()).toLocaleTimeString()}`);
+  createPerformance(req, res);
+});
+// app.post('/', function(req, res) {
+//   cookieCreate(req.cookies, res).then();
+//   console.log('cookie created successfully');
+//
+// });
+
+
+//creates a cookie and sets it in the users browser
+//inserts the cookie into the db if newly created
+function cookieCreate(req, res) {
+  // console.log(`–– CALLED cookieCreate`);
+  return new Promise((resolve, reject) => {
+    // new user
+    if (req.cookies.visitor == undefined) {
+      // make new cookie number
+      let cookieID = Math.floor(Math.random() * 100000000);
+      let create_date = (new Date).toISOString();
+      connection.query(`Insert into visitors(cookie, create_date) values ('${cookieID}', '${create_date}');`, function() {
+        setEnv(req, cookieID);
+      });
+      res.cookie('visitor', cookieID, {
+        maxAge: 900000,
+      }); //only lasts for 15 min?
+      resolve({
+        cookie: cookieID
+      });
+    }
+    resolve({
+      user: "exists"
+    });
+  });
+}
+
+function setEnv(req, cookie) {
+  // console.log(`–– CALLED setEnv`);
   var browser = useragent.parse(req.headers['user-agent']);
   browser = browser.toAgent(); // 'Chrome 15.0.874
 
   var osVar = useragent.parse(req.headers['user-agent']);
   osVar = osVar.os.toString(); // 'Mac OSX 10.8.1'
 
-  console.log(browser, osVar);
+  connection.query(`Insert into environment(os, browser, cookie) values ('${osVar}', '${browser}', '${cookie}');`);
+}
 
-  if (cookie === undefined) {
-    // no: set a new cookie
-    var cookieID = Math.random().toString();
-    cookieID = cookieID.substring(2, cookieID.length);
-    res.cookie('cookieName', cookieID, {
-      maxAge: 900000,
-      httpOnly: true
-    }); //only lasts for 15 min?
-    console.log('cookie created successfully');
-
-    connection.query(`insert into users(id, os, browser) values('${cookieID}','${osVar}', '${browser}');`);
-  } else {
-    // yes, cookie was already present
-    console.log('cookie exists', cookie);
-    connection.query(`select * from users where id=${cookie};`, function(err, rows, fields) {
-      if (err) console.log(err);
-      if (!rows.length) {
-        connection.query(`insert into users(id, os, browser) values('${cookie}','${osVar}', '${browser}');`);
-      }
-    });
+function setNav(req) {
+  // console.log(`–– CALLED setNav`);
+  let originURL = req.headers.referer;
+  let pt_A = "/outside";
+  if (originURL) {
+    pt_A = (url.parse(req.headers.referer, true)).pathname;
   }
-});
+  let pt_B = req.url;
+  connection.query(`Insert into navigation(pt_A, pt_B) values ('${pt_A}', '${pt_B}');`);
+}
 
-//event or error
+function createEvent(req, res) {
+  // console.log(`–– CALLED createEvent`);
+  cookieCreate(req, res).then(promise => {
+    let button_id = req.body.buttonID;
+    let cookie = req.cookies.visitor;
+    let time_stamp = (new Date).toISOString();
 
-app.post('/api/log/:logType', function(req, res) {
-  let user;
-  if (req.cookies) {
-    connection.query(`select * from users where id=${req.cookies.cookieName};`, function(err, rows, fields) {
-      if (rows) {
-        user = rows[0];
+    if (promise.cookie) {
+      cookie = promise.cookie;
+    }
+    connection.query(`Insert into events(button_id, time_stamp, cookie) values ('${button_id}', '${time_stamp}', '${cookie}');`);
+    res.sendStatus(200);
+  });
+}
 
-        console.log(user);
+function createError(req, res) {
+  // console.log(`–– CALLED createError`);
+  cookieCreate(req, res).then(promise => {
+    let error_type = req.body.error_type;
+    let lineno = req.body.lineno;
+    let page_source = req.body.page_source;
+    let cookie = req.cookies.visitor;
+    let time_stamp = (new Date).toISOString();
+    if (promise.cookie) {
+      cookie = promise.cookie;
+    }
+    connection.query(`Insert into errors(error_type, page_source, lineno, cookie, time_stamp) values ('${error_type}', '${page_source}', '${lineno}', '${cookie}', '${time_stamp}');`);
+    res.sendStatus(200);
+  });
+}
 
-
-        if (user.pattern) {
-          user.pattern = user.pattern + "-" + req.body.buttonType;
-        } else {
-          user.pattern = req.body.buttonType;
-        }
-
-        if (user.logs) {
-          user.logs = user.logs + "-" + req.body.logType;
-        } else {
-          user.logs = req.body.logType;
-        }
-
-        console.log(user);
-
-        connection.query(`UPDATE users SET pattern = '${user.pattern}', logs = '${user.logs}' WHERE id = ${user.id};`, function(err, rows, fields){
-          res.sendStatus(200)
-        });
-      }
-    });
-  } else {
-    res.sendStatus(500);
+function createPerformance(req, res) {
+  // console.log(`–– CALLED createPerformance`);
+  let render_time = req.body.render_time;
+  let time_stamp = (new Date).toISOString();
+  let page_source = (url.parse(req.headers.referer, true)).pathname;
+  let cookie = req.cookies.visitor;
+  if (cookie) {
+    connection.query(`Insert into performance(render_time, time_stamp, page_source, cookie) values ('${render_time}', '${time_stamp}', '${page_source}', '${cookie}');`);
   }
-});
+  res.sendStatus(200);
+}
 
+// app.post('/navigation' function(req, res) {
+//
+//   connection.query(`Insert into navigation(pt_A, pt_B) values ('${pt_A}', '${pt_B}');`);
+// })
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))

@@ -62,7 +62,9 @@ connection.connect(function(err) {
 });
 
 app.all('/portal', auth.requiresLogin());
+app.all('/profile', auth.requiresLogin());
 app.all('/admin', auth.requiresAdmin());
+app.all('/users/*', auth.requiresAdmin());
 
 app.get('/', function(req, res) {
     res.render('login');
@@ -73,7 +75,28 @@ app.get('/portal', function(req, res) {
 })
 
 app.get('/admin', function(req, res) {
-  res.render('admin');
+  users.renderUsers().then(html => {
+    res.render('admin', {
+      locals: {
+        users: html
+      }
+    });
+  });
+});
+
+app.get('/profile', function(req, res) {
+  res.render('profile');
+})
+
+app.get('/testchart', function(req, res) {
+  res.render('testchart');
+})
+
+app.get('/loaduser', function(req, res) {
+  users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
+    res.send({userInfo: userInfo});
+    res.sendStatus(200);
+  })
 })
 
 app.post('/login', function(req, res) {
@@ -89,14 +112,7 @@ app.post('/login', function(req, res) {
       console.log(`${req.body.email} successfully logged in!`)
       console.log(auth.logged_in_users);
       response.path = '/portal';
-      // res.render('portal');
-      // res.render('index', {
-      //   locals: {
-      //     title: 'Log page yo'
-      //   }
-      // });
     } else {
-      // res.render('login');
       response.path = '/';
     }
     res.send(JSON.stringify(response));
@@ -119,6 +135,25 @@ app.post('/data', function(req, res) {
     res.send(JSON.stringify(rows))
   });
 });
+
+app.put('/users/updateuser', function(req, res) {
+  users.updateUser(req.body.user_obj);
+  res.sendStatus(200);
+});
+
+app.delete('/users/deleteuser/:user', function(req, res) {
+  users.deleteUser(req.params.user).then(result => {
+    res.sendStatus(200);
+  });
+});
+
+app.post('/users/createuser', function(req, res) {
+  users.makeNewUser(req.body.user_obj).then(result => {
+    res.sendStatus(200);
+  })
+});
+
+
 
 // app.get('/cookie', function(req, res) {
 //   var cookies = setCookie.parse(res, {

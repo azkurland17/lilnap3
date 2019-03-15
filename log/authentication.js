@@ -57,12 +57,18 @@ function logout(cookie) {
 function checkAdminStatus(cookie) {
   let arr = Object.keys(logged_in_users);
   return new Promise((resolve, reject) => {
+    let user;
     for (var i = 0; i < arr.length; i++) {
       if (arr[i] == cookie) {
-        users.isAdmin(logged_in_users[arr[i]]).then(adminStatus => {
-          resolve(adminStatus);
-        });
+        user = logged_in_users[arr[i]];
       }
+    }
+    if(user){
+      users.isAdmin(user).then(adminStatus => {
+        resolve(adminStatus)
+      });
+    } else {
+      resolve(false);
     }
   });
 }
@@ -73,22 +79,31 @@ function requiresLogin() {
       console.log("authentication")
       if (isLoggedIn(req.cookies.cookie)) {
         next();
-      } else
-        res.render('login');
+      } else {
+        res.redirect('/');
+      }
     }
   ]
 }
 
-function requiresAdmin() {
+function requiresAdmin(req, res, next) {
   return [
     function(req, res, next) {
       console.log("authentication")
-      if (checkAdminStatus(req.cookies.cookie)) {
-        next();
-      } else
-        res.render('login');
+      checkAdminStatus(req.cookies.cookie).then(isAdmin => {
+        console.log("tesT", isAdmin)
+        if(isAdmin){
+          next();
+        } else {
+          res.redirect('/portal');
+        }
+      });
     }
   ]
+}
+
+function getUserFromCookie(cookie){
+  return logged_in_users[cookie];
 }
 
 module.exports = {
@@ -99,5 +114,6 @@ module.exports = {
   checkAdminStatus: checkAdminStatus,
   isLoggedIn: isLoggedIn,
   requiresLogin: requiresLogin,
-  requiresAdmin: requiresAdmin
+  requiresAdmin: requiresAdmin,
+  getUserFromCookie: getUserFromCookie
 }

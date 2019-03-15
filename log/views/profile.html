@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <h1>portal</h1>
+  <button onclick="window.location='/home'">Portal</button>
+
+  <script>
+    window.onload = function() {
+      $.ajax({
+        type: "get",
+        url: "http://localhost:4000/loaduser",
+        credentials: 'same-origin',
+        success: function(msg) {
+          console.log(msg);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

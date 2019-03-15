@@ -79,6 +79,40 @@ function deleteUser(email) {
   });
 }
 
+function readUsers() {
+  console.log("returning list of users");
+  return new Promise((resolve, reject) => {
+    connection.query(`select * from users ORDER BY first_name ASC;`, function(err, rows, fields) {
+      resolve(rows);
+    });
+  });
+}
+
+function renderUsers() {
+  let html;
+  return new Promise((resolve, reject) => {
+    readUsers().then(users => {
+      users.map(user => {
+        html += `
+      <tr>
+        <td>
+        </td>
+        <td>${user.first_name}</td>
+        <td>${user.last_name}</td>
+        <td>${user.email}</td>
+        <td>${(user.admin)? 'True': 'False'}</td>
+        <td>
+          <a href="#editEmployeeModal" class="edit" data-toggle="modal" onclick="populateEdit(${(JSON.stringify(user)).split("\"").join("\'")})"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+          <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" onclick="initializeDelete(\'${user.email}\')"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+        </td>
+      </tr>
+      `
+      });
+      resolve(html);
+    })
+  });
+}
+
 // checks if password matches given email
 function userPass(email, password) {
   return new Promise((resolve, reject) => {
@@ -96,17 +130,50 @@ function userPass(email, password) {
   });
 }
 
-function isAdmin(email){
+function isAdmin(email) {
   return new Promise((resolve, reject) => {
+    let isAdmin = false;
     connection.query(`select admin from users where email='${email}';`, function(err, rows, fields) {
       if (rows) {
         // check if password in DB for given user matches entered password
-        let exists = (rows[0].admin) ? true : false;
-        resolve(exists);
+        isAdmin = (rows[0].admin) ? true : false;
       } else {
-        resolve(false)
+        isAdmin = false;
       }
+      resolve(isAdmin);
     });
+  });
+}
+
+// {
+//   email: 'azkur17@ucsd.edu',
+//   password: '3556498',
+//   first_name: 'test',
+//   last_name: 'test',
+//   admin: 1
+// }
+
+function updateUser(userObj){
+  return new Promise((resolve, reject) => {
+    console.log(userObj);
+    let query;
+    if(userObj.password){
+      query = `UPDATE users SET password = '${userObj.password.hashCode()}', first_name = '${userObj.first_name}', last_name='${userObj.last_name}', admin='${userObj.admin}' WHERE email='${userObj.email}';`;
+      console.log('PASSWORD');
+    } else {
+      query = `UPDATE users SET first_name = '${userObj.first_name}', last_name='${userObj.last_name}', admin='${userObj.admin}' WHERE email='${userObj.email}';`;
+      console.log("NO PASSWORD!!!");
+    }
+    connection.query(query);
+    resolve();
+  });
+}
+
+function getUser(user){
+  return new Promise((resolve, reject) => {
+    console.log("in getuser");
+    console.log(user);
+    connection.query(`select`);
   });
 }
 
@@ -115,5 +182,8 @@ module.exports = {
   makeNewUser: makeNewUser,
   deleteUser: deleteUser,
   userPass: userPass,
-  isAdmin: isAdmin
+  isAdmin: isAdmin,
+  renderUsers: renderUsers,
+  updateUser: updateUser,
+  getUser: getUser
 }
