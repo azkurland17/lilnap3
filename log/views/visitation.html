@@ -21,6 +21,54 @@
       background: #FFFFFF;
     }
   </style>
+  <script>
+    function get() {
+      return new Promise((resolve, reject) => {
+
+        $.ajax({
+          type: "GET",
+          url: "/charts/visitation",
+          //data: data
+          success: function(data) {
+            var cy = window.cy = cytoscape({
+              container: document.getElementById('toshare'),
+
+              elements: data,
+              style: [{
+                  selector: 'node',
+                  style: {
+                    'label': 'data(id)',
+                    'width': 'data(width)',
+                    'height': 'data(height)',
+                    'background-color': 'data(color)'
+                  }
+                },
+                {
+                  selector: 'edge',
+                  style: {
+                    'target-arrow-color': '#ccc',
+                    'label': 'data(id)',
+                    'width': 'data(width)',
+                    'curve-style': 'bezier',
+                    'target-arrow-shape': 'triangle'
+                  }
+                }
+              ]
+
+            });
+          },
+          headers: {
+            "Content-type": "application/json"
+          },
+          xhrFields: {
+            withCredentials: true
+          },
+        })
+        resolve();
+
+      });
+    }
+  </script>
 </head>
 
 <body>
@@ -28,7 +76,7 @@
 
   </div>
   <div id="toshare" style="height: 100%;
-    width: 75%;
+    width: 100%;
     margin: 0px;">
   </div>
 
