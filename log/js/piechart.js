@@ -11,16 +11,24 @@ let browserArray = [];
 let browserAmounts = [];
 $.ajax({
   type: "GET",
-  url: "/charts/pie/os",
+  url: "/charts/environment",
   //data: data
   success: function(data) {
-    data.map(os => {
+    data.os.map(os => {
       osArray.push(os.os);
       osAmounts.push(os.count);
-      osColors.push(colorSorter(os.os));
+      osColors.push(colorSorterOS(os.os));
       osBorders.push("#FFFFFF");
       console.log(osArray);
       console.log(osAmounts);
+    })
+    data.browser.map(br => {
+      browserArray.push(br.browser);
+      browserAmounts.push(br.count);
+      browserColors.push(colorSorterBr(br.browser));
+      browserBorders.push("#FFFFFF");
+      console.log(browserArray);
+      console.log(browserAmounts);
     })
 
   },
@@ -61,12 +69,31 @@ $.ajax({
     };
 
     //options
-    var options = {
+    var options1 = {
       responsive: true,
       title: {
         display: true,
         position: "top",
-        text: "Pie Chart",
+        text: "Users Operating Systems",
+        fontSize: 18,
+        fontColor: "#111"
+      },
+      legend: {
+        display: true,
+        position: "bottom",
+        labels: {
+          fontColor: "#333",
+          fontSize: 16
+        }
+      }
+    };
+    //options
+    var options2 = {
+      responsive: true,
+      title: {
+        display: true,
+        position: "top",
+        text: "Users Browsers",
         fontSize: 18,
         fontColor: "#111"
       },
@@ -84,14 +111,14 @@ $.ajax({
     var chart1 = new Chart(ctx1, {
       type: "pie",
       data: data1,
-      options: options
+      options: options1
     });
 
     //create Chart class object
     var chart2 = new Chart(ctx2, {
       type: "pie",
       data: data2,
-      options: options
+      options: options2
     });
   });
 })
@@ -105,7 +132,7 @@ function getRandomColor() {
   return color;
 }
 
-function colorSorter(o) {
+function colorSorterOS(o) {
   var ret;
   if (o.includes("Windows")) {
     ret = "#a2c8ec";
@@ -120,7 +147,33 @@ function colorSorter(o) {
     ret = "#fbcabb";
   }
   else{
-    ret = getRandomColor;
+    ret = getRandomColor();
+  }
+  return ret;
+}
+
+function colorSorterBr(b){
+  var ret;
+  if (b.includes("Chrome")) {
+    ret = "#ffc6bd";
+  }
+  else if (b.includes("Firefox")) {
+    ret = "#ffa55c";
+  }
+  else if (b.includes("Safari")) {
+    ret = "#5cb0b4";
+  }
+  else if (b.includes("Edge")){
+    ret = "#9bae45";
+  }
+  else if (b.includes("UC")){
+    ret = "#ffd3a4";
+  }
+  else if (b.includes("Opera")){
+    ret = "#f4ef5a";
+  }
+  else{
+    ret = getRandomColor();
   }
   return ret;
 }
