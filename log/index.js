@@ -107,7 +107,9 @@ app.get('/piechart', function(req, res) {
 
 app.get('/loaduser', function(req, res) {
   users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
-    res.send({userInfo: userInfo});
+    res.send({
+      userInfo: userInfo
+    });
     res.sendStatus(200);
   })
 })
@@ -166,14 +168,22 @@ app.post('/users/createuser', function(req, res) {
   })
 });
 
-app.get('/charts/:chartType/:dataType', function(req, res) {
+app.get('/charts/:chartType', function(req, res) {
   console.log(req.params.chartType);
-  console.log(req.params.dataType);
-  db.getData(req.params.dataType).then(data => {
-    res.send(data)
-  });
+  switch (req.params.chartType) {
+    case 'performance':
+      db.getPerformanceData().then(data => {
+        res.send(data)
+      });
+      break;
+    case 'environment':
+    db.getEnvData().then(data => {
 
-})
+      res.send(data)
+    });
+    break;
+  }
+});
 
 app.post('/email', function(req, res) {
   var transporter = nodemailer.createTransport({
