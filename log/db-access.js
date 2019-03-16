@@ -12,7 +12,6 @@ connection.connect(function(err) {
 
 function getData(dataType){
   return new Promise((resolve, reject) => {
-    console.log(`select ${dataType}, count(${dataType}) as ${dataType} from environment group by ${dataType};`)
     connection.query(`select ${dataType}, count(${dataType}) as count from environment group by ${dataType};`, function(err, rows, fields){
       resolve(rows);
     })

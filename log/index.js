@@ -3,8 +3,10 @@ const es6Renderer = require('express-es6-template-engine')
 const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 let auth = require('./authentication');
+let share = require('./share');
 let users = require('./users');
 let db = require('./db-access');
+var nodemailer = require('nodemailer');
 const app = express()
 var cookieSecret = "lilnapkin";
 app.use(cookieParser(cookieSecret))
@@ -164,7 +166,7 @@ app.post('/users/createuser', function(req, res) {
   })
 });
 
-app.get('/charts/:chartType/:dataType', function(req,res) {
+app.get('/charts/:chartType/:dataType', function(req, res) {
   console.log(req.params.chartType);
   console.log(req.params.dataType);
   db.getData(req.params.dataType).then(data => {
@@ -172,6 +174,55 @@ app.get('/charts/:chartType/:dataType', function(req,res) {
   });
 
 })
+
+app.post('/email', function(req, res) {
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'cse135sendshared@gmail.com',
+      pass: '1209Inter'
+    }
+  });
+
+  var mailOptions = {
+    from: 'vcannall@ucsd.edu',
+    to: 'vcannall@ucsd.edu',
+    subject: 'Sending Email using Node.js',
+    text: 'That was easy!',
+    attachments: { // encoded string as an attachment
+      filename: 'shared.pdf',
+      content: `${req.body.pdf}`,
+      encoding: 'base64'
+    },
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+      console.log('Email sent: ' + info.response);
+    }
+  });
+})
+
+app.post('/makelink', function(req, res) {
+  console.log(req.body.encoded)
+  share.makeLink(req.body.encoded).then(link => {
+    res.send(link);
+  })
+});
+
+app.get('/viewpdf/:hash', function(req, res) {
+  share.renderPDF(req.params.hash).then(iframesrc => {
+    res.render('pdf', {
+      locals: {
+        iframesrc: iframesrc
+      }
+    });
+  });
+});
 
 
 
