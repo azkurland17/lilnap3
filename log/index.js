@@ -101,6 +101,17 @@ app.get('/testchart', function(req, res) {
   res.render('testchart');
 })
 
+app.get('/piechart', function(req, res) {
+  res.render('piechart');
+})
+
+app.get('/loaduser', function(req, res) {
+  users.getUser(auth.getUserFromCookie(req.cookies.cookie)).then(userInfo => {
+    res.send({userInfo: userInfo});
+    res.sendStatus(200);
+  })
+})
+
 app.post('/login', function(req, res) {
   let response = {
     path: ""
@@ -161,6 +172,7 @@ app.get('/charts/:chartType/:dataType', function(req, res) {
   db.getData(req.params.dataType).then(data => {
     res.send(data)
   });
+
 })
 
 app.post('/email', function(req, res) {
