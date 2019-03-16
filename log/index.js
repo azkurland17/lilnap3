@@ -99,8 +99,8 @@ app.get('/profile', function(req, res) {
   })
 })
 
-app.get('/testchart', function(req, res) {
-  res.render('testchart');
+app.get('/performance', function(req, res) {
+  res.render('performance');
 })
 
 app.get('/piechart', function(req, res) {

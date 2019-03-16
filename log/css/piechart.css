@@ -1,8 +1,3 @@
-body {
-  font-family: Helvetica Neue, Arial, sans-serif;
-  text-align: center;
-}
-
 .chart-container {
   width: 80%;
   height: 480px;
@@ -10,7 +5,7 @@ body {
 }
 
 .pie-chart-container {
-  height: 360px;
-  width: 360px;
+  height: 500px;
+  width: 500px;
   float: left;
 }
