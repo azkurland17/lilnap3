@@ -99,7 +99,6 @@ app.get('/testchart', function(req, res) {
   res.render('testchart');
 })
 
-<<<<<<< HEAD
 app.get('/piechart', function(req, res) {
   res.render('piechart');
 })
@@ -111,8 +110,6 @@ app.get('/loaduser', function(req, res) {
   })
 })
 
-=======
->>>>>>> master
 app.post('/login', function(req, res) {
   let response = {
     path: ""
@@ -167,20 +164,13 @@ app.post('/users/createuser', function(req, res) {
   })
 });
 
-<<<<<<< Updated upstream
 app.get('/charts/:chartType/:dataType', function(req,res) {
   console.log(req.params.chartType);
   console.log(req.params.dataType);
   db.getData(req.params.dataType).then(data => {
     res.send(data)
   });
-=======
-//example chartType=pie dataType= os, browser
-app.get('/getcharts/:chartType/:dataType', function(req,res) {
-  console.log(req.params.chartType);
-  console.log(req.params.dataType);
 
->>>>>>> Stashed changes
 })
 
 
