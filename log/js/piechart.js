@@ -1,11 +1,39 @@
+function get(){
+
+}
+let osArray;
+let osAmounts;
+$.ajax({
+  type: "GET",
+  url: "/charts/pie/os",
+  //data: data
+  success: function(data) {
+    console.log(data)
+    console.log("HI");
+    data.map(os => {
+      console.log(os.os);
+      osArray = os.os;
+      osAmounts = os.count;
+      console.log(os.count);
+    })
+  },
+  headers: {
+    "Content-type": "application/json"
+  },
+  xhrFields: {
+    withCredentials: true
+  },
+});
+
+
 $(function(){
 
   //get the pie chart canvas
-  var ctx1 = $("#pie-chartcanvas-OS");
-  var ctx2 = $("#pie-chartcanvas-Browser");
+  var ctx1 = $("#pie-chartcanvas-1");
+  var ctx2 = $("#pie-chartcanvas-2");
 
   //pie chart data
-  var dataOS = {
+  var data1 = {
     labels: ["match1", "match2", "match3", "match4", "match5"],
     datasets: [
       {
@@ -31,7 +59,7 @@ $(function(){
   };
 
   //pie chart data
-  var dataBrowser = {
+  var data2 = {
     labels: ["match1", "match2", "match3", "match4", "match5"],
     datasets: [
       {
@@ -57,31 +85,12 @@ $(function(){
   };
 
   //options
-  var optionsOS = {
+  var options = {
     responsive: true,
     title: {
       display: true,
       position: "top",
-      text: "Users OS",
-      fontSize: 18,
-      fontColor: "#111"
-    },
-    legend: {
-      display: true,
-      position: "bottom",
-      labels: {
-        fontColor: "#333",
-        fontSize: 16
-      }
-    }
-  };
-  //options
-  var optionsBrowser = {
-    responsive: true,
-    title: {
-      display: true,
-      position: "top",
-      text: "Users Browsers",
+      text: "Pie Chart",
       fontSize: 18,
       fontColor: "#111"
     },
@@ -98,14 +107,14 @@ $(function(){
   //create Chart class object
   var chart1 = new Chart(ctx1, {
     type: "pie",
-    data: dataOS,
-    options: optionsOS
+    data: data1,
+    options: options
   });
 
   //create Chart class object
   var chart2 = new Chart(ctx2, {
     type: "pie",
-    data: dataBrowser,
-    options: optionsBrowser
+    data: data2,
+    options: options
   });
 });
