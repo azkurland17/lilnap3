@@ -11,62 +11,96 @@ window.onload = function() {
 }
 var doc = new jsPDF('p', 'pt', 'a4')
 
-function genPDF() {
-  var options = {
-    pagesplit: true,
-    width: document.getElementById('toshare').width,
-    height: document.getElementById('toshare').height,
-  };
+function shrink() {
+  return new Promise((resolve, reject) => {
+    document.getElementsByTagName("body")[0].style.height = `400%`;
+    document.getElementsByTagName("body")[0].style.width = `25%`;
+    get().then(test => {
+      setTimeout(function() {
+        resolve();
+      }, 500);
 
-  doc.addHTML($("#toshare"), options, function() {
-    doc.save("test.pdf");
+    });
   });
+}
+
+function enlarge() {
+  document.getElementsByTagName("body")[0].style.height = `100%`;
+  document.getElementsByTagName("body")[0].style.width = `100%`;
+  get()
+}
+
+function genPDF() {
+  shrink().then(test => {
+
+    var options = {
+      pagesplit: true,
+      width: document.getElementById('toshare').width,
+      height: document.getElementById('toshare').height,
+    };
+
+    doc.addHTML($("#toshare"), options, function() {
+      doc.save("test.pdf");
+      setTimeout(function() {
+        enlarge();
+      }, 500);
+
+    });
+
+  })
+
+
 }
 
 function genLink() {
-  var options = {
-    pagesplit: true,
-    width: document.getElementById('toshare').width,
-    height: document.getElementById('toshare').height,
-  };
+  shrink().then(test => {
+    var options = {
+      pagesplit: true,
+      width: document.getElementById('toshare').width,
+      height: document.getElementById('toshare').height,
+    };
 
-  doc.addHTML($("#toshare"), options, function() {
-    $.ajax({
-      type: "post",
-      url: "http://localhost:4000/makelink",
-      credentials: 'same-origin',
-      data: {
-        encoded: window.btoa(doc.output())
-      },
-      success: function(msg) {
-        document.getElementById('link').innerHTML = msg;
-      }
+    doc.addHTML($("#toshare"), options, function() {
+      enlarge();
+      $.ajax({
+        type: "post",
+        url: "http://localhost:4000/makelink",
+        credentials: 'same-origin',
+        data: {
+          encoded: window.btoa(doc.output())
+        },
+        success: function(msg) {
+          document.getElementById('link').innerHTML = msg;
+        }
+      });
     });
-  });
-
-
+  })
 }
 
 function email() {
-  var options = {
-    pagesplit: true,
-    width: document.getElementById('toshare').width,
-    height: document.getElementById('toshare').height,
-  };
-  let email = document.getElementById('email').value;
-  doc.addHTML($("#toshare"), options, function() {
-    $.ajax({
-      type: "post",
-      url: "http://localhost:4000/email",
-      credentials: 'same-origin',
-      data: {
-        email: email,
-        pdf: window.btoa(doc.output())
-      },
-      success: function(msg) {
-        document.getElementById('email').value = "email sent!"
-        console.log(msg);
-      }
-    })
-  });
+  shrink().then(test => {
+    var options = {
+      pagesplit: true,
+      width: document.getElementById('toshare').width,
+      height: document.getElementById('toshare').height,
+    };
+    let email = document.getElementById('email').value;
+    doc.addHTML($("#toshare"), options, function() {
+      enlarge();
+      $.ajax({
+        type: "post",
+        url: "http://localhost:4000/email",
+        credentials: 'same-origin',
+        data: {
+          email: email,
+          pdf: window.btoa(doc.output())
+        },
+        success: function(msg) {
+          document.getElementById('email').value = "email sent!"
+          console.log(msg);
+        }
+      })
+    });
+  })
+
 }

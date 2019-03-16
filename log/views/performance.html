@@ -1,32 +1,61 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>performance</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../css/performance.css">
-  </head>
-  <body>
+
+<head>
+  <title>performance</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../css/performance.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+    <script src='../js/share.js'></script>
+  <style>
+    /* html, */
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0px;
+    }
+
+    ,
+    canvas {
+      background: #FFFFFF;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="share">
+
+  </div>
+  <div id="toshare" style="height: 100%;
+    width: 100%;
+    margin: 0px;">
     <div class="wrapper">
       <h1>Loading Time Per Hour of the Day</h1>
-      <canvas id="myChart" width="1600" height="900"></canvas>
+      <canvas id="myChart" width="50%" height="25%"></canvas>
     </div>
 
     <div class="wrapper">
       <h1>Loading Times Per WebPage</h1>
-      <canvas id="myChartPage" width="1600" height="900"></canvas>
+      <canvas id="myChartPage" width="50%" height="25%"></canvas>
     </div>
 
-    <div class = "wrapper">
+    <div class="wrapper">
       <h1>Loading Times Per Browser</h1>
-      <canvas id="myPieChart" width="1600" height="900"></canvas>
+      <canvas id="myPieChart" width="50%" height="25%"></canvas>
     </div>
 
-    <div class = "wrapper">
+    <div class="wrapper">
       <h1>Loading Times Per Operating System</h1>
-      <canvas id="myOSChart" width="1600" height="900"></canvas>
+      <canvas id="myOSChart" width="50%" height="25%"></canvas>
     </div>
+      
+  </div>
 
-    <script src="../js/performance.js"></script>
-  </body>
+
+  <script src="../js/performance.js"></script>
+  <script>get()</script>
+</body>
+
 </html>

@@ -68,6 +68,7 @@ connection.connect(function(err) {
 
 app.all('/portal', auth.requiresLogin());
 app.all('/profile', auth.requiresLogin());
+app.all('/reports/*', auth.requiresLogin());
 app.all('/admin', auth.requiresAdmin());
 app.all('/users/*', auth.requiresAdmin());
 
@@ -99,11 +100,11 @@ app.get('/profile', function(req, res) {
   })
 })
 
-app.get('/performance', function(req, res) {
+app.get('/reports/performance', function(req, res) {
   res.render('performance');
 })
 
-app.get('/piechart', function(req, res) {
+app.get('/reports/piechart', function(req, res) {
   res.render('piechart');
 })
 
