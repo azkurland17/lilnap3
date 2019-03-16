@@ -13,6 +13,7 @@ connection.connect(function(err) {
 function makeLink(base64){
   let link = "http://localhost:4000/viewpdf/";
   let hash = Math.floor(Math.random() * 100000000);
+  console.log(base64)
   return new Promise((resolve, reject) => {
     connection.query(`insert into pdfs (hash, encoding) values ('${hash}', '${base64}');`, function(err, rows, fields){
       resolve(link + hash);

@@ -4,8 +4,10 @@ const bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 let auth = require('./authentication');
 let share = require('./share');
+let visitation = require('./visitation');
 let users = require('./users');
 let db = require('./db-access');
+var cytoscape = require('cytoscape');
 var nodemailer = require('nodemailer');
 const app = express()
 var cookieSecret = "lilnapkin";
@@ -24,7 +26,7 @@ app.engine('html', es6Renderer);
 app.set('views', 'views');
 app.set('view engine', 'html');
 app.use(bodyParser.urlencoded({
-  extended: true
+  limit: 90000000000000000*1000000
 }));
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -168,6 +170,10 @@ app.post('/users/createuser', function(req, res) {
   })
 });
 
+app.get('/visitation', function(req, res) {
+  res.render('visitation');
+})
+
 app.get('/charts/:chartType', function(req, res) {
   console.log(req.params.chartType);
   switch (req.params.chartType) {
@@ -177,15 +183,20 @@ app.get('/charts/:chartType', function(req, res) {
       });
       break;
     case 'environment':
-    db.getEnvData().then(data => {
+      db.getEnvData().then(data => {
 
-      res.send(data)
-    });
-    break;
+        res.send(data)
+      });
+      break;
+    case 'visitation':
+      visitation.getData().then(data => {
+        res.send(data);
+      });
   }
 });
 
 app.post('/email', function(req, res) {
+  console.log(req.body.pdf);
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -196,7 +207,7 @@ app.post('/email', function(req, res) {
 
   var mailOptions = {
     from: 'vcannall@ucsd.edu',
-    to: 'vcannall@ucsd.edu',
+    to: `${req.body.email}`,
     subject: 'Sending Email using Node.js',
     text: 'That was easy!',
     attachments: { // encoded string as an attachment
@@ -218,7 +229,6 @@ app.post('/email', function(req, res) {
 })
 
 app.post('/makelink', function(req, res) {
-  console.log(req.body.encoded)
   share.makeLink(req.body.encoded).then(link => {
     res.send(link);
   })
