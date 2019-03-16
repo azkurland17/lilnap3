@@ -11,7 +11,7 @@ connection.connect(function(err) {
 });
 
 function makeLink(base64){
-  let link = "http://localhost:4000/viewpdf/";
+  let link = "http://104.248.219.235:4001/viewpdf/";
   let hash = Math.floor(Math.random() * 100000000);
   console.log(base64)
   return new Promise((resolve, reject) => {

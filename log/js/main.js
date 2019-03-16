@@ -74,7 +74,7 @@ document.getElementById("submit").addEventListener("click", function(event){
   console.log("click");
   $.ajax({
     type: "post",
-    url: "http://localhost:4000/login",
+    url: "http://104.248.219.235:4001/login",
     credentials: 'same-origin',
     data: {
       'email': document.getElementById("email").value,

@@ -34,7 +34,7 @@ function submitEvent(buttonID) {
   buttonID = buttonID.split('-')[1];
   $.ajax({
     type: "POST",
-    url: "http://localhost:3000/event",
+    url: "http://104.248.219.235:3001/event",
     data: {
       'buttonID': buttonID,
     },
@@ -52,7 +52,7 @@ function submitError(buttonID) {
   buttonID = buttonID.split('-')[1];
   $.ajax({
     type: "POST",
-    url: "http://localhost:3000/event",
+    url: "http://104.248.219.235:3001/event",
     data: {
       'buttonID': buttonID,
     },
@@ -68,7 +68,7 @@ function submitError(buttonID) {
 function submitRender() {
   $.ajax({
     type: "POST",
-    url: "http://localhost:3000/performance",
+    url: "http://104.248.219.235:3001/performance",
     data: {
       'render_time': new Date().getTime() - renderStart,
     },
@@ -84,7 +84,7 @@ window.onerror = function(message, source, lineno, colno, error) {
 
   $.ajax({
     type: "POST",
-    url: "http://localhost:3000/error",
+    url: "http://104.248.219.235:3001/error",
     data: {
       'page_source': source,
       'error_type': (message.split(":"))[0],

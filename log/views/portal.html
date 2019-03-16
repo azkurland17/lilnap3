@@ -17,7 +17,7 @@
     function logout() {
       $.ajax({
         type: "post",
-        url: "http://localhost:4000/logout",
+        url: "http://104.248.219.235:4001/logout",
         credentials: 'same-origin',
         success: function(msg) {
           window.location = (JSON.parse(msg)).path;
